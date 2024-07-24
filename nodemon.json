@@ -1,0 +1,12 @@
+{
+    "verbose": true,
+    "ignore": [ ".git", ".idea", "node_modules", "./test/*", "*.test.js", "./logs" ],
+    "delay": 2500,
+    "execMap": {
+        "js": "babel-node ./src/main.js"
+    },
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "ext": "js mjs cjs json"
+}

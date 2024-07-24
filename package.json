@@ -1,0 +1,68 @@
+{
+  "name": "billbill",
+  "author": {
+    "name": "UMC-billbill",
+    "url": "https://github.com/umc-billbill"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/umc-billbill"
+  },
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist",
+    "lint": "eslint --fix {src,test}/**/*.js",
+    "prebuild": "yarn run clean && yarn run lint",
+    "build": "babel src --out-dir dist",
+    "pretest": "yarn run build",
+    "test": "jest",
+    "prestart:dev": "yarn run clean",
+    "start:dev": "cross-env NODE_ENV=development nodemon",
+    "prestart:prod": "yarn run build",
+    "start:prod": "cross-env NODE_ENV=production node dist/main.js",
+    "start:dev-db": "docker compose -f docker/dev-db.compose.yml up -d"
+  },
+  "engines": {
+    "node": ">= 20.15.1",
+    "yarn": ">= 1.22.22"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.24.8",
+    "@babel/core": "^7.24.9",
+    "@babel/eslint-parser": "^7.24.8",
+    "@babel/node": "^7.24.8",
+    "@babel/preset-env": "^7.24.8",
+    "@eslint/js": "^9.7.0",
+    "@jest/globals": "^29.7.0",
+    "@stylistic/eslint-plugin": "^2.3.0",
+    "babel-jest": "^29.7.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "cross-env": "^7.0.3",
+    "eslint": "9.x",
+    "eslint-plugin-jest": "^28.6.0",
+    "globals": "^15.8.0",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.4",
+    "rimraf": "^6.0.1",
+    "superagent": "^9.0.2",
+    "supertest": "^7.0.0"
+  },
+  "dependencies": {
+    "core-js": "^3.37.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.10.3",
+    "passport": "^0.7.0",
+    "passport-http-bearer": "^1.0.1",
+    "redis": "^4.6.15",
+    "winston": "^3.13.1",
+    "winston-daily-rotate-file": "^5.0.0",
+    "ws": "^8.18.0"
+  }
+}

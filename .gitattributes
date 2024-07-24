@@ -1,0 +1,2 @@
+# disable git's auto linebreak convert \n (unix style) to \r\n (windows style) in windows os
+*.js text eol=lf

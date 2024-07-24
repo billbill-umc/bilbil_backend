@@ -1,0 +1,21 @@
+{
+    "presets": [
+        [
+            "@babel/preset-env", {
+                "modules": "cjs",
+                "useBuiltIns": "entry",
+                "corejs": "3.37.1"
+            }
+        ]
+    ],
+    "plugins": [
+        "@babel/plugin-syntax-top-level-await",
+        [
+            "module-resolver", {
+                "alias": {
+                    "@": "./src"
+                }
+            }
+        ]
+    ]
+}
