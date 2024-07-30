@@ -1,5 +1,5 @@
 import { getDatabase } from "@/config/db";
-import { testSql } from "@/model/sql/test";
+import { testSql } from "@/model/sql/example";
 
 
 export async function getTest() {
