@@ -133,3 +133,5 @@ dist
 # JetBrains ID
 .idea
 
+# Resource
+docs/**/*.csv

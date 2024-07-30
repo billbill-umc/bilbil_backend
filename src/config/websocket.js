@@ -9,7 +9,7 @@ export function initWebsocket(server) {
 
     wss.on("connection", ws => {
         ws.on("message", data => {
-
+            console.log(data);
         });
     });
 

@@ -27,26 +27,26 @@ CREATE TABLE category
 CREATE TABLE areaSiDo
 (
     id   INT PRIMARY KEY AUTO_INCREMENT,
-    code INT          NOT NULL UNIQUE,
+    code BIGINT          NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE areaSiGunGu
 (
     id     INT PRIMARY KEY AUTO_INCREMENT,
-    siDoId INT          NOT NULL,
-    code   INT          NOT NULL UNIQUE,
+    siDoCode BIGINT          NOT NULL,
+    code   BIGINT          NOT NULL UNIQUE,
     name   VARCHAR(255) NOT NULL,
-    FOREIGN KEY (siDoId) REFERENCES areaSiDo (id)
+    FOREIGN KEY (siDoCode) REFERENCES areaSiDo (code)
 );
 
 CREATE TABLE areaEubMyeonDong
 (
     id        INT PRIMARY KEY AUTO_INCREMENT,
-    siGunGuId INT          NOT NULL,
-    code      INT          NOT NULL UNIQUE,
+    siGunGuCode BIGINT          NOT NULL,
+    code      BIGINT          NOT NULL UNIQUE,
     name      VARCHAR(255) NOT NULL,
-    FOREIGN KEY (siGunGuId) REFERENCES areaSiGunGu (id)
+    FOREIGN KEY (siGunGuCode) REFERENCES areaSiGunGu (code)
 );
 
 CREATE TABLE post
@@ -108,9 +108,11 @@ CREATE TABLE chat
     id        INT PRIMARY KEY AUTO_INCREMENT,
     postId    INT NOT NULL,
     senderId  INT NOT NULL,
+    receiverId INT NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (postId) REFERENCES post (id) ON DELETE CASCADE,
-    FOREIGN KEY (senderId) REFERENCES user (id) ON DELETE CASCADE
+    FOREIGN KEY (senderId) REFERENCES user (id) ON DELETE CASCADE,
+    FOREIGN KEY (receiverId) REFERENCES user (id) ON DELETE CASCADE
 );
 
 CREATE TABLE chatMessage

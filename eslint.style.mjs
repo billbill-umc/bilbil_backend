@@ -41,6 +41,7 @@ export default {
             tabWidth: 4,
             ignoreComments: true,
             ignoreStrings: true,
+            ignoreTemplateLiterals: true,
             ignoreRegExpLiterals: true
         } ],
         "@stylistic/max-statements-per-line": "off",

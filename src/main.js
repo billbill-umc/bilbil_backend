@@ -1,13 +1,16 @@
 import "./env";
 import logger from "./config/logger";
-import { getDatabase, initDatabase } from "./config/db";
+import { getDatabase, initDatabase, initQueryBuilder } from "./config/db";
 import { initExpress } from "./app";
 import { getCache, initCache } from "@/config/cache";
 import { initWebsocket } from "@/config/websocket";
+import { insertAreaToDatabase, isAreaDataExist } from "@/area-csv/insert-database";
+import { parseArea, parseRawAreaCsv } from "@/area-csv/parse";
 
 (async () => {
     try {
         await initDatabase();
+        await initQueryBuilder();
     } catch (e) {
         logger.error("Failed to init database.");
         logger.error(e);
@@ -18,6 +21,22 @@ import { initWebsocket } from "@/config/websocket";
         await initCache();
     } catch (e) {
         logger.error("Failed to init cache.");
+        logger.error(e);
+        process.exit(1);
+    }
+
+    try {
+        logger.info("Checking if area data exists in database.");
+        if (!await isAreaDataExist()) {
+            logger.info("Area data does not exist in database. Inserting area data to database.");
+            const rawAreaRecords = await parseRawAreaCsv();
+            const areaData = parseArea(rawAreaRecords);
+            await insertAreaToDatabase(areaData);
+        } else {
+            logger.info("Area data already exists in database. Skip inserting area data to database.");
+        }
+    } catch (e) {
+        logger.error("Failed to insert area data to database.");
         logger.error(e);
         process.exit(1);
     }
