@@ -43,10 +43,6 @@ export function getDatabase() {
 }
 
 /**
- * @typedef {knex&(<TRecord=any extends {}, TResult=unknown[]>(config: (Knex.Config | string)) => Knex<TRecord, TResult>)} KnexBuilderFunction
- */
-
-/**
  * @type {import("knex").Knex}
  */
 let builder;
