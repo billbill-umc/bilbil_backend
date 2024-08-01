@@ -52,7 +52,7 @@ export async function insertAreaSiGunGu(siGunGu) {
 
 /**
  * get list of si/gun/gu area from database
- * @return {Promise<{id: number, siDoCode: number, code: number, name: string}>}
+ * @return {Promise<{id: number, siDoCode: number, code: number, name: string}[]>}
  */
 export async function getAreaSiGunGuList() {
     return getQueryBuilder()("areaSiGunGu").select("*");
