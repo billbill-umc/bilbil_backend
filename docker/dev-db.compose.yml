@@ -13,10 +13,11 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - "../docs/table-schema.sql:/docker-entrypoint-initdb.d/table-schema.sql"
+      - "/c/Users/tladm/bilbil_backend/docs/00-table-schema.sql:/docker-entrypoint-initdb.d/table-schema.sql"
+
   redis:
     container_name: bilbil-redis
-    image: redis:latest
+    image: redis:latest 
     restart: unless-stopped
     ports:
       - "6379:6379"
