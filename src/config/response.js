@@ -47,7 +47,10 @@ const ResponseCode = {
     UNAUTHORIZED: { success: false, code: "UNAUTHORIZED", message: "잘못된 인증 정보입니다." },
 
     // chattings
-    INVALID_CHAT_ID: { success: false, code: "INVALID_CHAT_ID", message: "잘못된 채팅 ID 입니다." }
+    INVALID_CHAT_ID: { success: false, code: "INVALID_CHAT_ID", message: "잘못된 채팅 ID 입니다." },
+
+    // notifications
+    INVALID_NOTIFICATION_ID: { success: false, code: "INVALID_NOTIFICATION_ID", message: "잘못된 알림 ID 입니다." }
 
     // add more response messages here
 };

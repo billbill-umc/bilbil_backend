@@ -116,6 +116,7 @@ export async function GetChattingByIdService(req, res) {
             itemName: chatting.postItemName,
             price: chatting.postPrice,
             deposit: chatting.postDeposit
+            // TODO: ADD IMAGES
         },
         socketNamespace: `/chattings/${chattingId}`,
         messages: resultMessages
