@@ -14,7 +14,6 @@ const errorFileLogger = new transports.DailyRotateFile({
     maxSize: MAX_LOG_SIZE,
     maxFiles: MAX_LOG_FILES,
     format: format.combine(
-        format.errors({ stack: true }),
         format.json(),
         format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" })
     )
@@ -27,7 +26,6 @@ const infoFileLogger = new transports.DailyRotateFile({
     maxSize: MAX_LOG_SIZE,
     maxFiles: MAX_LOG_FILES,
     format: format.combine(
-        format.errors({ stack: true }),
         format.json(),
         format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" })
     )
@@ -35,10 +33,12 @@ const infoFileLogger = new transports.DailyRotateFile({
 
 const consoleLogger = new transports.Console({
     format: format.combine(
-        format.errors({ stack: true }),
         format.colorize(),
         format.timestamp(),
-        format.printf(({ level, message, timestamp, stack }) => `[${timestamp}][${level}] ${message}${stack ? `\n${stack}` : ""}`)
+        format.printf(ctx => {
+            const { level, message, timestamp, stack } = ctx;
+            return `[${timestamp}][${level}] ${message ?? ""}${stack ? `\n${stack}` : ""}`;
+        })
     )
 });
 

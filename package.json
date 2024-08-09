@@ -14,7 +14,6 @@
   "scripts": {
     "clean": "rimraf dist",
     "lint": "eslint --fix {src,test}/**/*.js",
-    "prebuild": "yarn run clean && yarn run lint",
     "build": "babel src --out-dir dist",
     "pretest": "yarn run build",
     "test": "jest",
