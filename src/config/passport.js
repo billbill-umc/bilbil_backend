@@ -16,6 +16,11 @@ export class Passport401Error extends Error {
 }
 
 passport.use(new BearerStrategy.Strategy((token, done) => {
+    if (!token) {
+        const e = new Passport401Error;
+        return done(e);
+    }
+
     verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
         if (err) {
             const e = new Passport401Error;

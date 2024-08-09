@@ -9,7 +9,7 @@ export default async function initWithAuthRouter() {
     router.get("/test/with-auth",
         // by add passport.authenticate("bearer")
         // this router will require bearer token (JWT in HTTP header "Authorization")
-        passport.authenticate("bearer", { session: false }),
+        passport.authenticate("bearer", { session: false, failWithError: true }),
         asyncHandler(WithAuthController));
 
     return router;

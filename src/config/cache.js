@@ -4,7 +4,13 @@ import logger from "@/config/logger";
 /**
  * @type {import("redis").RedisClientType}
  */
+let originClient;
+
+/**
+ * @type {import("redis").RedisClientType}
+ */
 let client;
+
 
 export async function initCache() {
     const { REDIS_HOST, REDIS_PORT, REDIS_USERNAME, REDIS_PASSWORD } = process.env;
@@ -13,28 +19,35 @@ export async function initCache() {
         throw new Error("Missing redis configuration.");
     }
 
-    client = createClient({
+    originClient = createClient({
         url: `redis://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0`,
         connectTimeout: 5000
     });
 
-    client.on("ready", () => {
+    originClient.on("ready", () => {
         logger.info("Cache connection established.");
     });
 
-    client.on("end", () => {
+    originClient.on("end", () => {
         logger.info("Cache connection closed.");
     });
-
-    await client.connect();
 }
 
 /**
  * @return {Promise<import("redis").RedisClientType>}
  */
 export async function getCache() {
-    if (!client.isReady) {
+    if (!client || !client.isReady) {
+        client = originClient.duplicate();
         await client.connect();
     }
     return client;
 }
+
+/**
+ * @return {import("redis").RedisClientType}
+ */
+export function getDuplicated() {
+    return originClient.duplicate();
+}
+

@@ -1,11 +1,12 @@
 import "./env";
 import logger from "./config/logger";
 import { getDatabase, initDatabase, initQueryBuilder } from "./config/db";
-import { initExpress } from "./app";
+import { createServer } from "http";
+import { initWebSocket } from "./ws";
 import { getCache, initCache } from "@/config/cache";
-import { initWebsocket } from "@/config/websocket";
 import { insertAreaToDatabase, isAreaDataExist } from "@/area-csv/insert-database";
 import { parseArea, parseRawAreaCsv } from "@/area-csv/parse";
+import { initExpress } from "@/app";
 
 (async () => {
     try {
@@ -43,13 +44,15 @@ import { parseArea, parseRawAreaCsv } from "@/area-csv/parse";
 
     try {
         const port = process.env.PORT || 3000;
-        const app = await initExpress(port);
 
-        const server = app.listen(port, () => {
-            logger.info(`Server listening on port ${port}.`);
-        });
-        const wss = initWebsocket(server);
+        const app = await initExpress();
+        const server = createServer(app);
+        initWebSocket(server);
+
+        server.listen(port);
+        logger.info(`Server listening on port ${port}.`);
     } catch (e) {
+        logger.error("Failed to init web server.");
         logger.error(e.message);
         process.exit(1);
     }
