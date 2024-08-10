@@ -4,6 +4,7 @@ import { getQueryBuilder } from "@/config/db";
  * @param {object} postData
  * @return {Promise<object>}
  */
+
 export async function createPostService(postData) {
   const knex = getQueryBuilder();
   console.log('Inserting post data:', postData);
@@ -13,12 +14,13 @@ export async function createPostService(postData) {
   return insertedPost;
 }
 
+
 /**
  * @return {Promise<object[]>}
  */
 export async function getPostsService() {
-  const knex = getQueryBuilder();
-  return await knex("post").select("*");
+    const knex = getQueryBuilder();
+    return await knex("post").select("*");
 }
 
 /**
@@ -26,8 +28,8 @@ export async function getPostsService() {
  * @return {Promise<object | null>}
  */
 export async function getPostService(id) {
-  const knex = getQueryBuilder();
-  return await knex("post").where({ id }).first();
+    const knex = getQueryBuilder();
+    return await knex("post").where({ id }).first();
 }
 
 /**
@@ -36,10 +38,10 @@ export async function getPostService(id) {
  * @return {Promise<object | null>}
  */
 export async function updatePostService(id, updateData) {
-  const knex = getQueryBuilder();
-  const affectedRows = await knex("post").where({ id }).update(updateData);
-  if (affectedRows === 0) return null;
-  return { id, ...updateData };
+    const knex = getQueryBuilder();
+    const affectedRows = await knex("post").where({ id }).update(updateData);
+    if (affectedRows === 0) return null;
+    return { id, ...updateData };
 }
 
 /**
@@ -47,7 +49,7 @@ export async function updatePostService(id, updateData) {
  * @return {Promise<boolean>}
  */
 export async function deletePostService(id) {
-  const knex = getQueryBuilder();
-  const affectedRows = await knex("post").where({ id }).del();
-  return affectedRows > 0;
+    const knex = getQueryBuilder();
+    const affectedRows = await knex("post").where({ id }).del();
+    return affectedRows > 0;
 }
