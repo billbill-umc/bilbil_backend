@@ -58,11 +58,11 @@ addColors({
 
 const loggerTransports = [ consoleLogger ];
 
-if (ERROR_LOG) {
+if (typeof ERROR_LOG === "string" && ERROR_LOG !== "") {
     loggerTransports.push(errorFileLogger);
 }
 
-if (INFO_LOG) {
+if (typeof INFO_LOG === "string" && INFO_LOG !== "") {
     loggerTransports.push(infoFileLogger);
 }
 
