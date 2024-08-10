@@ -30,8 +30,6 @@ jobs:
           echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
           echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
           echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
-          echo REDIS_USER_NAME=${{ secrets.REDIS_USER_NAME }} >> .env
-          echo REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} >> .env
 
       - name: Configute AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
