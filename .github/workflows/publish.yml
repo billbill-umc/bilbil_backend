@@ -1,0 +1,36 @@
+name: publish-pipeline
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - publish
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download area csv file
+        uses: wei/wget@v1
+        with:
+          args: {{ env.AREA_CSV_URL }}
+      - name: Create .env file
+        run: |
+          touch .env
+          echo TOKEN_SECRET={{ secrets.TOKEN_SECRET }} >> .env
+          echo AREA_CSV_FILE={{ secrets.AREA_CSV_FILE }} >> .env
+          echo DB_HOST={{ secrets.DB_HOST }} >> .env
+          echo DB_PORT={{ secrets.DB_PORT }} >> .env
+          echo DB_USER={{ secrets.DB_USER }} >> .env
+          echo DB_PASSWORD={{ secrets.DB_PASSWORD }} >> .env
+          echo DB_DATABASE={{ secrets.DB_DATABASE }} >> .env
+          echo REDIS_HOST={{ secrets.REDIS_HOST }} >> .env
+          echo REDIS_PORT={{ secrets.REDIS_PORT }} >> .env
+          echo REDIS_USER_NAME={{ secrets.REDIS_USER_NAME }} >> .env
+          echo REDIS_PASSWORD={{ secrets.REDIS_PASSWORD }} >> .env
+      - name: echo
+        run: |
+          ls -al
+
