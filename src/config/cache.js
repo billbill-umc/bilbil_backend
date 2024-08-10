@@ -15,21 +15,26 @@ let client;
 export async function initCache() {
     const { REDIS_HOST, REDIS_PORT, REDIS_USERNAME, REDIS_PASSWORD } = process.env;
 
-    if (!REDIS_HOST || !REDIS_PORT || !REDIS_USERNAME || !REDIS_PASSWORD) {
+    if (!REDIS_HOST || !REDIS_PORT) {
         throw new Error("Missing redis configuration.");
     }
 
+    let url = "redis://";
+
+    if (typeof REDIS_USERNAME === "string" && REDIS_USERNAME !== "") {
+        url += REDIS_USERNAME;
+    } else {
+        url += "default";
+    }
+
+    if (typeof REDIS_PASSWORD === "string" && REDIS_PASSWORD !== "") {
+        url += `:${REDIS_PASSWORD}`;
+    }
+
+    url += `@${REDIS_HOST}:${REDIS_PORT}/0`;
+
     originClient = createClient({
-        url: `redis://${REDIS_USERNAME}:${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/0`,
-        connectTimeout: 5000
-    });
-
-    originClient.on("ready", () => {
-        logger.info("Cache connection established.");
-    });
-
-    originClient.on("end", () => {
-        logger.info("Cache connection closed.");
+        url, connectTimeout: 5000
     });
 }
 
@@ -39,6 +44,15 @@ export async function initCache() {
 export async function getCache() {
     if (!client || !client.isReady) {
         client = originClient.duplicate();
+
+        client.on("connect", () => {
+            logger.info("Cache connection established.");
+        });
+
+        client.on("end", () => {
+            logger.info("Cache connection closed.");
+        });
+
         await client.connect();
     }
     return client;
@@ -48,6 +62,16 @@ export async function getCache() {
  * @return {import("redis").RedisClientType}
  */
 export function getDuplicated() {
-    return originClient.duplicate();
+    const duplicated = originClient.duplicate();
+
+    duplicated.on("ready", () => {
+        logger.info("Cache connection established.");
+    });
+
+    duplicated.on("end", () => {
+        logger.info("Cache connection closed.");
+    });
+
+    return duplicated;
 }
 
