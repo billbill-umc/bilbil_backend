@@ -27,25 +27,25 @@ CREATE TABLE category
 CREATE TABLE areaSiDo
 (
     id   INT PRIMARY KEY AUTO_INCREMENT,
-    code BIGINT          NOT NULL UNIQUE,
+    code BIGINT       NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE areaSiGunGu
 (
-    id     INT PRIMARY KEY AUTO_INCREMENT,
-    siDoCode BIGINT          NOT NULL,
-    code   BIGINT          NOT NULL UNIQUE,
-    name   VARCHAR(255) NOT NULL,
+    id       INT PRIMARY KEY AUTO_INCREMENT,
+    siDoCode BIGINT       NOT NULL,
+    code     BIGINT       NOT NULL UNIQUE,
+    name     VARCHAR(255) NOT NULL,
     FOREIGN KEY (siDoCode) REFERENCES areaSiDo (code)
 );
 
 CREATE TABLE areaEubMyeonDong
 (
-    id        INT PRIMARY KEY AUTO_INCREMENT,
-    siGunGuCode BIGINT          NOT NULL,
-    code      BIGINT          NOT NULL UNIQUE,
-    name      VARCHAR(255) NOT NULL,
+    id          INT PRIMARY KEY AUTO_INCREMENT,
+    siGunGuCode BIGINT       NOT NULL,
+    code        BIGINT       NOT NULL UNIQUE,
+    name        VARCHAR(255) NOT NULL,
     FOREIGN KEY (siGunGuCode) REFERENCES areaSiGunGu (code)
 );
 
@@ -54,7 +54,7 @@ CREATE TABLE post
     id            INT PRIMARY KEY AUTO_INCREMENT,
     authorId      INT          NOT NULL,
     categoryId    INT          NOT NULL,
-    areaId        INT          NOT NULL,
+    areaCode      BIGINT       NOT NULL,
     itemName      VARCHAR(255) NOT NULL,
     price         INT          NOT NULL,
     deposit       INT          NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE post
     updatedAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (authorId) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (categoryId) REFERENCES category (id),
-    FOREIGN KEY (areaId) REFERENCES areaEubMyeonDong (id)
+    FOREIGN KEY (areaCode) REFERENCES areaEubMyeonDong (code)
 );
 
 CREATE TABLE postImage
@@ -105,11 +105,11 @@ CREATE TABLE interestPost
 
 CREATE TABLE chat
 (
-    id        INT PRIMARY KEY AUTO_INCREMENT,
-    postId    INT NOT NULL,
-    senderId  INT NOT NULL,
+    id         INT PRIMARY KEY AUTO_INCREMENT,
+    postId     INT NOT NULL,
+    senderId   INT NOT NULL,
     receiverId INT NOT NULL,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    createdAt  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (postId) REFERENCES post (id) ON DELETE CASCADE,
     FOREIGN KEY (senderId) REFERENCES user (id) ON DELETE CASCADE,
     FOREIGN KEY (receiverId) REFERENCES user (id) ON DELETE CASCADE
@@ -118,11 +118,11 @@ CREATE TABLE chat
 CREATE TABLE chatMessage
 (
     id        INT PRIMARY KEY AUTO_INCREMENT,
-    chatId    INT                    NOT NULL,
-    senderId  INT                    NOT NULL,
+    chatId    INT  NOT NULL,
+    senderId  INT  NOT NULL,
     type      ENUM ('TEXT', 'IMAGE') NOT NULL DEFAULT 'TEXT',
-    content   TEXT                   NOT NULL,
-    createdAt TIMESTAMP                       DEFAULT CURRENT_TIMESTAMP,
+    content   TEXT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (chatId) REFERENCES chat (id) ON DELETE CASCADE,
     FOREIGN KEY (senderId) REFERENCES user (id) ON DELETE CASCADE
 );
@@ -139,7 +139,7 @@ CREATE TABLE chatImage
 CREATE TABLE notification
 (
     id         INT PRIMARY KEY AUTO_INCREMENT,
-    userId     INT                                                                                       NOT NULL,
+    userId     INT NOT NULL,
     targetType ENUM ('MY_POST_INTERESTED', 'NEW_CHAT', 'LENT', 'BORROW', 'CANCEL_LENT', 'CANCEL_BORROW') NOT NULL,
     targetId   INT,
     isRead     BOOLEAN   DEFAULT false,
