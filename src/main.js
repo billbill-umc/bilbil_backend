@@ -10,8 +10,11 @@ import { initExpress } from "@/app";
 
 (async () => {
     try {
+        logger.info("Initializing database.");
         await initDatabase();
         await initQueryBuilder();
+        const testConnection = await getDatabase().getConnection();
+        await testConnection.release();
     } catch (e) {
         logger.error("Failed to init database.");
         logger.error(e);
