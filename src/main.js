@@ -22,7 +22,10 @@ import { initExpress } from "@/app";
     }
 
     try {
+        logger.info("Initializing cache.");
         await initCache();
+        const testConnection = await getCache();
+        await testConnection.disconnect();
     } catch (e) {
         logger.error("Failed to init cache.");
         logger.error(e);
