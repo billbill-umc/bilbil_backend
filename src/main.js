@@ -50,13 +50,18 @@ import { initExpress } from "@/app";
 
     try {
         const port = process.env.PORT || 3000;
+        const app = await initExpress(port);
 
-        const app = await initExpress();
-        const server = createServer(app);
-        initWebSocket(server);
 
-        server.listen(port);
-        logger.info(`Server listening on port ${port}.`);
+        const server = app.listen(port, () => {
+            logger.info(`Server listening on port ${port}.`);
+        });
+
+   
+        const wss = initWebsocket(server);
+
+ 
+    
     } catch (e) {
         logger.error("Failed to init web server.");
         logger.error(e.message);
