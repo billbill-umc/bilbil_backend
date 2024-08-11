@@ -50,7 +50,11 @@ const ResponseCode = {
     INVALID_CHAT_ID: { success: false, code: "INVALID_CHAT_ID", message: "잘못된 채팅 ID 입니다." },
 
     // notifications
-    INVALID_NOTIFICATION_ID: { success: false, code: "INVALID_NOTIFICATION_ID", message: "잘못된 알림 ID 입니다." }
+    INVALID_NOTIFICATION_ID: { success: false, code: "INVALID_NOTIFICATION_ID", message: "잘못된 알림 ID 입니다." },
+
+    // posts
+    INVALID_POST_ID: { success: false, code: "INVALID_POST_ID", message: "잘못된 게시글 ID 입니다." },
+    INVALID_POST_DATA: { success: false, code: "INVALID_POST_DATA", message: "잘못된 게시글 데이터 입니다." }
 
     // add more response messages here
 };

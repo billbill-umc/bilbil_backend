@@ -25,8 +25,8 @@ export async function initExpress() {
     await loadRouters(app, __dirname, "route");
 
     // default middlewares after routers
-    app.use(notFoundHandler);
     app.use(unauthorizedHandler);
+    app.use(notFoundHandler);
     app.use(errorHandler);
 
     return app;
