@@ -30,6 +30,10 @@ jobs:
           echo DB_DATABASE=${{ secrets.DB_DATABASE }} >> .env
           echo REDIS_HOST=${{ secrets.REDIS_HOST }} >> .env
           echo REDIS_PORT=${{ secrets.REDIS_PORT }} >> .env
+          echo MAIL_HOST=${{ secrets.MAIL_HOST }} >> .env
+          echo MAIL_PORT=${{ secrets.MAIL_PORT }} >> .env
+          echo MAIL_USER=${{ secrets.MAIL_USER }} >> .env
+          echo MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }} >> .env
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
