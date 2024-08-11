@@ -1,13 +1,46 @@
-import { Router } from 'express';
-import asyncHandler from 'express-async-handler';
-import { createPostController, getPostsController, getPostController, updatePostController, deletePostController } from '../feature/post/post.controller.js';
+import { Router } from "express";
+import asyncHandler from "express-async-handler";
+import {
+    CreatePostController,
+    DeletePostController,
+    GetPostController,
+    GetPostsController,
+    UpdatePostController
+} from "@/feature/post/post.controller.js";
+import passport from "passport";
 
-const router = Router();
+export default async function initPostRouter() {
+    const router = Router();
 
-router.post('/posts', asyncHandler(createPostController));
-router.get('/posts', asyncHandler(getPostsController));
-router.get('/posts/:id', asyncHandler(getPostController));
-router.put('/posts/:id', asyncHandler(updatePostController));
-router.delete('/posts/:id', asyncHandler(deletePostController));
+    router.post(
+        "/posts",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(CreatePostController)
+    );
 
-export default router;
+    router.get(
+        "/posts",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(GetPostsController)
+    );
+
+    router.get(
+        "/posts/:id",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(GetPostController)
+    );
+
+    router.patch(
+        "/posts/:id",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(UpdatePostController)
+    );
+
+    router.delete(
+        "/posts/:id",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(DeletePostController)
+    );
+
+    return router;
+}

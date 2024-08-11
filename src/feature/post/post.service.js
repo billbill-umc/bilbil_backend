@@ -1,55 +1,253 @@
-import { getQueryBuilder } from "@/config/db";
+import zod, { ZodError } from "zod";
+import { response, ResponseCode } from "@/config/response";
+import { createPost, deletePost, getPostById, getPosts, updatePost } from "@/db/post.dao";
 
 /**
- * @param {object} postData
- * @return {Promise<object>}
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
  */
+export async function CreatePostService(req, res) {
+    const { user } = req;
+    const userId = user.aud;
 
-export async function createPostService(postData) {
-  const knex = getQueryBuilder();
-  console.log('Inserting post data:', postData);
-  const [id] = await knex("post").insert(postData);
-  const insertedPost = { id, ...postData };
-  console.log('Inserted post:', insertedPost);
-  return insertedPost;
+    if (!user.aud) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
+    const post = req.body;
+
+    const postSchema = zod.object({
+        itemName: zod.string(),
+        description: zod.string(),
+        areaCode: zod.number(),
+        categoryId: zod.number(),
+        price: zod.number().min(0),
+        deposit: zod.number().min(0),
+        itemCondition: zod.enum([ "NEW", "HIGH", "MIDDLE", "LOW" ]),
+        dateBegin: zod.number(),
+        dateEnd: zod.number()
+    });
+
+    try {
+        postSchema.parse(req.body);
+        post.dateBegin = new Date(post.dateBegin * 1000);
+        if (post.dateEnd) {
+            post.dateEnd = new Date(post.dateEnd * 1000);
+        }
+    } catch (e) {
+        if (e instanceof ZodError) {
+            return response(ResponseCode.INVALID_POST_DATA, { issues: e.issues });
+        }
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    const [ id ] = await createPost({ ...post, authorId: userId });
+
+    return response(ResponseCode.SUCCESS, { createdPostId: id });
 }
 
 
 /**
- * @return {Promise<object[]>}
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
  */
-export async function getPostsService() {
-    const knex = getQueryBuilder();
-    return await knex("post").select("*");
+export async function GetPostsService(req, res) {
+    const { page, size, area, category } = req.query;
+
+    const params = { page, size, area, category };
+
+    if (!page) {
+        params.page = 1;
+    } else {
+        if (isNaN(Number(page))) {
+            return response(ResponseCode.BAD_REQUEST, null);
+        }
+        params.page = Number(page);
+    }
+
+    if (!size) {
+        params.size = 20;
+    } else {
+        if (isNaN(Number(size))) {
+            return response(ResponseCode.BAD_REQUEST, null);
+        }
+        params.size = Number(size);
+    }
+
+    if (!area) {
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    params.area = area.split(",").map(Number)
+        .filter(n => !isNaN(n));
+
+    if (params.area.length < 1) {
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    if (!category) {
+        params.category = null;
+    } else {
+        if (isNaN(Number(category))) {
+            return response(ResponseCode.BAD_REQUEST, null);
+        }
+        params.category = Number(category);
+    }
+
+    // TODO: ADD author data
+
+    const posts = (await getPosts(params)).map(post => ({
+        id: post.id,
+        author: {
+            id: post.authorId,
+            avatar: ""
+        },
+        itemName: post.itemName,
+        description: post.description,
+        condition: post.itemCondition,
+        thumbnail: "",
+        area: post.areaCode,
+        price: post.price,
+        deposit: post.deposit,
+        createdAt: Math.floor(post.createdAt / 1000),
+        updatedAt: Math.floor(post.updatedAt / 1000)
+    }));
+
+    return response(ResponseCode.SUCCESS, { posts });
 }
 
 /**
- * @param {number} id
- * @return {Promise<object | null>}
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
  */
-export async function getPostService(id) {
-    const knex = getQueryBuilder();
-    return await knex("post").where({ id }).first();
+export async function GetPostService(req, res) {
+    const id = Number(req.params.id);
+
+    if (isNaN(id)) {
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    const post = await getPostById(id);
+    if (!post) {
+        return response(ResponseCode.INVALID_POST_ID, null);
+    }
+
+    console.log(post);
+
+    // TODO: Add author data and image
+    const postResponse = {
+        id: post.id,
+        author: {
+            id: post.authorId,
+            username: "",
+            avatar: ""
+        },
+        itemName: post.itemName,
+        itemCondition: post.itemCondition,
+        category: post.categoryId,
+        images: [],
+        description: post.description,
+        price: post.price,
+        deposit: post.deposit,
+        area: post.areaCode,
+        dateBegin: Math.floor(post.dateBegin / 1000),
+        dateEnd: post.dateEnd ? Math.floor(post.dateEnd / 1000) : null,
+        createdAt: Math.floor(post.createdAt / 1000),
+        updatedAt: Math.floor(post.updatedAt / 1000),
+        isLent: false
+    };
+
+    return response(ResponseCode.SUCCESS, postResponse);
 }
 
 /**
- * @param {number} id
- * @param {object} updateData
- * @return {Promise<object | null>}
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
  */
-export async function updatePostService(id, updateData) {
-    const knex = getQueryBuilder();
-    const affectedRows = await knex("post").where({ id }).update(updateData);
-    if (affectedRows === 0) return null;
-    return { id, ...updateData };
+export async function UpdatePostService(req, res) {
+    const { user } = req;
+    const userId = user.aud;
+
+    if (!user.aud) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
+    const id = Number(req.params.id);
+
+    if (isNaN(Number(id))) {
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    const post = await getPostById(id);
+
+    if (post.authorId !== userId) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
+    const postUpdateBodySchema = zod.object({
+        itemName: zod.string().optional(),
+        description: zod.string().optional(),
+        price: zod.number().min(0)
+            .optional(),
+        deposit: zod.number().min(0)
+            .optional(),
+        dateBegin: zod.number().optional(),
+        dateEnd: zod.number().optional(),
+        itemCondition: zod.enum([ "NEW", "HIGH", "MIDDLE", "LOW" ]).optional(),
+        category: zod.number().optional()
+    });
+
+    try {
+        postUpdateBodySchema.parse(req.body);
+    } catch (e) {
+        if (e instanceof ZodError) {
+            return response(ResponseCode.INVALID_POST_DATA, { issues: e.issues });
+        }
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    try {
+        await updatePost(id, req.body);
+        return response(ResponseCode.SUCCESS, null);
+    } catch (e) {
+        return response(ResponseCode.INVALID_POST_DATA, null);
+    }
 }
 
 /**
- * @param {number} id
- * @return {Promise<boolean>}
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
  */
-export async function deletePostService(id) {
-    const knex = getQueryBuilder();
-    const affectedRows = await knex("post").where({ id }).del();
-    return affectedRows > 0;
+export async function DeletePostService(req, res) {
+    const { user } = req;
+    const userId = user.aud;
+
+    if (!user.aud) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
+    const id = Number(req.params.id);
+
+    if (isNaN(Number(id))) {
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    const post = await getPostById(id);
+
+    if (!post) {
+        return response(ResponseCode.INVALID_POST_ID, null);
+    }
+
+    if (post.authorId !== userId) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
+    await deletePost(id);
+
+    return response(ResponseCode.SUCCESS, null);
 }

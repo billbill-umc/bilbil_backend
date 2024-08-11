@@ -1,21 +1,19 @@
-import { createPostService, getPostsService, getPostService, updatePostService, deletePostService } from './post.service.js';
+import {
+    CreatePostService,
+    DeletePostService,
+    GetPostService,
+    GetPostsService,
+    UpdatePostService
+} from "./post.service.js";
 
 /**
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  * @return {Promise<void>}
  */
-export async function createPostController(req, res) {
-  try {
-    const postData = req.body;
-    console.log('Received post data:', postData);
-    const newPost = await createPostService(postData);
-    console.log('New post created:', newPost);
-    res.status(201).json(newPost);
-} catch (error) {
-    console.error('Error creating post:', error);
-    res.status(500).json({ error: "Error creating post" });
-}
+export async function CreatePostController(req, res) {
+    const response = await CreatePostService(req, res);
+    res.send(response);
 }
 
 /**
@@ -23,14 +21,9 @@ export async function createPostController(req, res) {
  * @param {import("express").Response} res
  * @return {Promise<void>}
  */
-export async function getPostsController(req, res) {
-    try {
-        const posts = await getPostsService();
-        res.status(200).json(posts);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error fetching posts" });
-    }
+export async function GetPostsController(req, res) {
+    const response = await GetPostsService(req, res);
+    res.send(response);
 }
 
 /**
@@ -38,19 +31,9 @@ export async function getPostsController(req, res) {
  * @param {import("express").Response} res
  * @return {Promise<void>}
  */
-export async function getPostController(req, res) {
-    try {
-        const { id } = req.params;
-        const post = await getPostService(id);
-        if (post) {
-            res.status(200).json(post);
-        } else {
-            res.status(404).json({ error: "Post not found" });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error fetching post" });
-    }
+export async function GetPostController(req, res) {
+    const response = await GetPostService(req, res);
+    res.send(response);
 }
 
 /**
@@ -58,20 +41,9 @@ export async function getPostController(req, res) {
  * @param {import("express").Response} res
  * @return {Promise<void>}
  */
-export async function updatePostController(req, res) {
-    try {
-        const { id } = req.params;
-        const updateData = req.body;
-        const updatedPost = await updatePostService(id, updateData);
-        if (updatedPost) {
-            res.status(200).json(updatedPost);
-        } else {
-            res.status(404).json({ error: "Post not found" });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error updating post" });
-    }
+export async function UpdatePostController(req, res) {
+    const response = await UpdatePostService(req, res);
+    res.send(response);
 }
 
 /**
@@ -79,17 +51,7 @@ export async function updatePostController(req, res) {
  * @param {import("express").Response} res
  * @return {Promise<void>}
  */
-export async function deletePostController(req, res) {
-    try {
-        const { id } = req.params;
-        const success = await deletePostService(id);
-        if (success) {
-            res.status(200).json({ message: "Post deleted" });
-        } else {
-            res.status(404).json({ error: "Post not found" });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error deleting post" });
-    }
+export async function DeletePostController(req, res) {
+    const response = await DeletePostService(req, res);
+    res.send(response);
 }
