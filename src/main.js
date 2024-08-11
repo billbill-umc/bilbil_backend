@@ -45,16 +45,16 @@ import { parseArea, parseRawAreaCsv } from "@/area-csv/parse";
         const port = process.env.PORT || 3000;
         const app = await initExpress(port);
 
-
+        // Listen for incoming requests
         const server = app.listen(port, () => {
             logger.info(`Server listening on port ${port}.`);
         });
 
-   
+        // Initialize WebSocket
         const wss = initWebsocket(server);
 
- 
-    
+        // Optionally, you can log that WebSocket has been initialized
+        logger.info("WebSocket initialized.");
     } catch (e) {
         logger.error(e.message);
         process.exit(1);
