@@ -1,10 +1,12 @@
-import { relative, resolve } from "path";
-import { readdir } from "fs/promises";
-import logger from "@/config/logger";
+import { relative, resolve } from 'path';
+import { readdir } from 'fs/promises';
+import logger from '@/config/logger';
 
 /**
  * Load express routers
- * @param {express | express.Router} app
+ * @param {express | express.Router} parent
+ * @param {string} callerPath
+ * @param {string} basePath
  * @return {Promise<void>}
  */
 export default async function loadRouters(parent, callerPath, basePath) {
@@ -22,7 +24,6 @@ export default async function loadRouters(parent, callerPath, basePath) {
         logger.error(e.message);
         process.exit(1);
     }
-
 
     for (const routerFile of routerFiles) {
         const importFullUrl = `${importPath}/${routerFile}`;
