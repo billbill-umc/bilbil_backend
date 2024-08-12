@@ -17,7 +17,8 @@ import { initExpress } from "@/app";
         await testConnection.release();
     } catch (e) {
         logger.error("Failed to init database.");
-        logger.error(e);
+        logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
@@ -28,7 +29,8 @@ import { initExpress } from "@/app";
         await testConnection.disconnect();
     } catch (e) {
         logger.error("Failed to init cache.");
-        logger.error(e);
+        logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
@@ -44,35 +46,44 @@ import { initExpress } from "@/app";
         }
     } catch (e) {
         logger.error("Failed to insert area data to database.");
-        logger.error(e);
+        logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
     try {
         const port = process.env.PORT || 3000;
-        const app = await initExpress(port);
+        const app = await initExpress();
 
+        const server = createServer(app);
 
-        const server = app.listen(port, () => {
+        server.listen(port, () => {
             logger.info(`Server listening on port ${port}.`);
         });
 
-   
-        const wss = initWebsocket(server);
-
- 
-    
+        initWebSocket(server); // 웹소켓 초기화
     } catch (e) {
         logger.error("Failed to init web server.");
         logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
-    process.on("exit", () => {
-        const dbConnection = getDatabase();
-        dbConnection.close().catch(e => logger.error(e.message));
+    process.on("exit", async () => {
+        try {
+            const dbConnection = getDatabase();
+            await dbConnection.close();
+        } catch (e) {
+            logger.error(e.message);
+            logger.error(e.stack);
+        }
 
-        getCache().then(connection => connection.disconnect())
-            .catch(e => logger.error(e.message));
+        try {
+            const cacheConnection = await getCache();
+            await cacheConnection.disconnect();
+        } catch (e) {
+            logger.error(e.message);
+            logger.error(e.stack);
+        }
     });
 })();

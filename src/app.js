@@ -13,9 +13,9 @@ import path from 'path';
  * Initialize express server
  * @return import("express").Express
  */
-export async function initExpress() {
+export async function initExpress(port) {
   const app = express();
-  
+
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
   // 기본 미들웨어 설정
@@ -32,12 +32,12 @@ export async function initExpress() {
   // /api 경로에 모든 라우터 적용
   app.use("/api", postRouter);
   app.use("/api", rentRouter);
-  app.use("/api", imageRouter)
+  app.use("/api", imageRouter);
 
   // 오류 처리 미들웨어 설정
   app.use(notFoundHandler);
   app.use(unauthorizedHandler);
   app.use(errorHandler);
 
-    return app;
+  return app;
 }
