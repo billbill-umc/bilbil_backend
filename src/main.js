@@ -7,6 +7,7 @@ import { getCache, initCache } from "@/config/cache";
 import { insertAreaToDatabase, isAreaDataExist } from "@/area-csv/insert-database";
 import { parseArea, parseRawAreaCsv } from "@/area-csv/parse";
 import { initExpress } from "@/app";
+import { initS3Client } from "@/config/aws";
 
 (async () => {
     try {
@@ -30,6 +31,13 @@ import { initExpress } from "@/app";
         logger.error("Failed to init cache.");
         logger.error(e);
         process.exit(1);
+    }
+
+    try {
+        logger.info("Initializing S3 client.");
+        await initS3Client();
+    } catch (e) {
+        console.error(e);
     }
 
     try {
