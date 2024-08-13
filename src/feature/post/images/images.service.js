@@ -1,5 +1,5 @@
 import { response, ResponseCode } from "@/config/response";
-import { createPostImages, deletePostImage, getPostWithImages } from "@/db/post.dao";
+import { createPostImages, deletePostImage, getPostById, getPostWithImages } from "@/db/post.dao";
 import { Counter } from "@/util/counter";
 
 /**
@@ -20,7 +20,8 @@ export async function BeforeCreatePostImageService(req, res) {
         return { success: false, response: response(ResponseCode.INVALID_POST_ID, null) };
     }
 
-    const post = await getPostWithImages(postId);
+
+    const post = await getPostById(postId);
     if (!post) {
         return { success: false, response: response(ResponseCode.INVALID_POST_ID, null) };
     }
@@ -29,10 +30,20 @@ export async function BeforeCreatePostImageService(req, res) {
         return { success: false, response: response(ResponseCode.UNAUTHORIZED, null) };
     }
 
-    req.imageName = {
-        prefix: `posts/${postId}/images/image_`,
-        startNum: new Counter(post.images.length + 1)
-    };
+    const postWithImages = await getPostWithImages(postId);
+
+    if (!postWithImages) {
+        req.imageName = {
+            prefix: `posts/${postId}/images/image_`,
+            startNum: new Counter(1)
+        };
+    } else {
+        req.imageName = {
+            prefix: `posts/${postId}/images/image_`,
+            startNum: new Counter(postWithImages.images.length + 1)
+        };
+    }
+
 
     return { success: true };
 }

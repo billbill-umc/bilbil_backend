@@ -5,11 +5,16 @@ import {
 } from "@/feature/post/images/images.service";
 
 export async function BeforeCreatePostImageController(req, res, next) {
-    const result = await BeforeCreatePostImageService(req, res);
+    try {
+        const result = await BeforeCreatePostImageService(req, res);
 
-    if (!result.success) {
-        return res.send(result.response);
+        if (!result.success) {
+            return res.send(result.response);
+        }
+    } catch (e) {
+        console.log(e);
     }
+
 
     next();
 }
