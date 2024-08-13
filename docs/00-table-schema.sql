@@ -133,10 +133,11 @@ CREATE TABLE chatMessage
 CREATE TABLE chatImage
 (
     id            INT PRIMARY KEY AUTO_INCREMENT,
-    chatMessageId INT          NOT NULL,
+    chatId        INT          NOT NULL,
     url           VARCHAR(512) NOT NULL,
     createdAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (chatMessageId) REFERENCES chatMessage (id) ON DELETE CASCADE
+    isDeleted BOOLEAN   DEFAULT false,
+    FOREIGN KEY (chatId) REFERENCES chat (id) ON DELETE CASCADE
 );
 
 CREATE TABLE notification

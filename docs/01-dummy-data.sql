@@ -1,8 +1,9 @@
-INSERT INTO user (email, password, salt)
-    VALUES ('example@mail.com', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
 
-INSERT INTO user (email, password, salt)
-VALUES ('test@mail.com', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
+INSERT INTO user (email, userId, username, phoneNumber, password, salt)
+    VALUES ('example@mail.com', 'exampleUser1', 'user1', '010-0000-0000', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
+
+INSERT INTO user (email, userId, username, phoneNumber, password, salt)
+VALUES ('test@mail.com', 'testUser1', 'uusseerr', '010-1234-5678', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
 
 
 INSERT INTO category (name)
@@ -31,3 +32,8 @@ INSERT INTO notification (userId, targetType, targetId)
            (2, 'NEW_CHAT', 1);
 
 
+INSERT INTO postImage (postId, url)
+VALUES (1, 'https://via.placeholder.com/150'),
+       (1, 'https://via.placeholder.com/150'),
+       (2, 'https://via.placeholder.com/150'),
+       (2, 'https://via.placeholder.com/150');
