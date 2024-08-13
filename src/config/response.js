@@ -57,6 +57,10 @@ const ResponseCode = {
     INVALID_POST_ID: { success: false, code: "INVALID_POST_ID", message: "잘못된 게시글 ID 입니다." },
     INVALID_POST_DATA: { success: false, code: "INVALID_POST_DATA", message: "잘못된 게시글 데이터 입니다." },
 
+    // posts/images
+    INVALID_MIME_TYPE: { success: false, code: "INVALID_MIME_TYPE", message: "지원하지 않는 파일 형식입니다. (jpg, jpeg, png 만 가능합니다.)" },
+    INVALID_IMAGE_ID: { success: false, code: "INVALID_IMAGE_ID", message: "잘못된 이미지 ID 입니다." },
+
     // auth (sign in, login)
     INVALID_EMAIL_ADDRESS: { success: false, code: "INVALID_EMAIL_ADDRESS", message: "잘못된 이메일 주소입니다." },
     CODE_NOT_MATCH: { success: false, code: "CODE_NOT_MATCH", message: "인증 코드가 일치하지 않습니다." },

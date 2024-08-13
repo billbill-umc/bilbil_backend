@@ -8,9 +8,10 @@ import {
     UpdatePostController
 } from "@/feature/post/post.controller.js";
 import passport from "passport";
+import loadRouters from "@/middleware/router";
 
 export default async function initPostRouter() {
-    const router = Router();
+    const router = Router({ mergeParams: true });
 
     router.post(
         "/posts",
@@ -41,6 +42,9 @@ export default async function initPostRouter() {
         passport.authenticate("bearer", { session: false, failWithError: true }),
         asyncHandler(DeletePostController)
     );
+
+    await loadRouters(router, __dirname, "post");
+
 
     return router;
 }
