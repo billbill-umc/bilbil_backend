@@ -111,3 +111,37 @@ export async function getMessages(chatId) {
     return getQueryBuilder()("chatMessage")
         .where("chatId", "=", chatId);
 }
+
+/**
+ * @param {number} chatId
+ * @return {Promise<{id: number, senderId: number, receiverId: number, images: {id: number, url: string}[]}>}
+ */
+export async function getChatWithImageMessages(chatId) {
+    const raw = await getQueryBuilder()("chat")
+        .select(
+            "chat.id as id",
+            "chat.senderId as senderId",
+            "chat.receiverId as receiverId",
+            "chatImage.id as imageId",
+            "chatImage.url as imageUrl"
+        )
+        .rightJoin("chatImage", "chat.id", "chatImage.chatId")
+        .where("chat.id", "=", chatId)
+        .andWhereNot("chatImage.isDeleted", 1);
+
+    if (!raw || raw.length < 1) return;
+
+    return {
+        id: raw[0].id,
+        senderId: raw[0].senderId,
+        receiverId: raw[0].receiverId,
+        images: raw.map(i => ({ id: i.imageId, url: i.imageUrl }))
+    };
+}
+
+export async function createChatImage(chatId, url) {
+    return getQueryBuilder()("chatImage")
+        .insert({
+            chatId, url
+        });
+}
