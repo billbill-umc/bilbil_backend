@@ -22,15 +22,15 @@ export default async function initImagesRouter() {
             bucket: process.env.AWS_S3_BUCKET,
             key: (req, file, cb) => {
                 const ext = mimeToExt(file.mimetype);
-
                 if (!ext) {
                     return cb(new InvalidMimeTypeError);
                 }
                 if (!(ext === "jpeg" || ext === "jpg" || ext === "png")) {
                     return cb(new InvalidMimeTypeError);
                 }
+                const currentFileNum = req.imageName.startNum.next();
 
-                cb(null, `${req.imageName}.${ext}`);
+                cb(null, `${req.imageName.prefix}${currentFileNum}.${ext}`);
             }
         })
     });
@@ -39,7 +39,7 @@ export default async function initImagesRouter() {
         "/posts/:postId/images",
         passport.authenticate("bearer", { session: false, failWithError: true }),
         asyncHandler(BeforeCreatePostImageController),
-        upload.single("image"),
+        upload.array("image", 8),
         asyncHandler(AfterCreatePostImageController),
         imageUploadErrorHandler
     );

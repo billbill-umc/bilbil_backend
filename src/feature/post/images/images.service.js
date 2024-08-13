@@ -1,5 +1,6 @@
 import { response, ResponseCode } from "@/config/response";
-import { createPostImage, deletePostImage, getPostWithImages } from "@/db/post.dao";
+import { createPostImages, deletePostImage, getPostWithImages } from "@/db/post.dao";
+import { Counter } from "@/util/counter";
 
 /**
  * @param {import("express").Request} req
@@ -28,7 +29,10 @@ export async function BeforeCreatePostImageService(req, res) {
         return { success: false, response: response(ResponseCode.UNAUTHORIZED, null) };
     }
 
-    req.imageName = `posts/${postId}/images/image_${post.images.length + 1}`;
+    req.imageName = {
+        prefix: `posts/${postId}/images/image_`,
+        startNum: new Counter(post.images.length + 1)
+    };
 
     return { success: true };
 }
@@ -39,10 +43,18 @@ export async function BeforeCreatePostImageService(req, res) {
  * @return {Promise<{}>}
  */
 export async function AfterCreatePostImageService(req, res) {
-    const fileUrl = req?.file?.location;
-    if (!fileUrl) throw new Error("Failed to upload image");
+    if (!req.files) {
+        throw new Error("Failed to upload image");
+    }
 
-    await createPostImage(Number(req.params.postId), fileUrl);
+    const fileUrls = req.files.map(file => {
+        if (!file.location) {
+            throw new Error("Failed to upload image");
+        }
+        return file.location;
+    });
+
+    await createPostImages(Number(req.params.postId), fileUrls);
 
     return response(ResponseCode.SUCCESS, null);
 }

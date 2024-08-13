@@ -137,6 +137,11 @@ export async function createPostImage(postId, url) {
         });
 }
 
+export async function createPostImages(postId, urls) {
+    return getQueryBuilder()("postImage")
+        .insert(urls.map(url => ({ postId, url })));
+}
+
 export async function deletePostImage(imageId) {
     return getQueryBuilder()("postImage")
         .where("id", "=", imageId)
