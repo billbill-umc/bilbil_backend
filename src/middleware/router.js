@@ -1,6 +1,6 @@
-import { relative, resolve } from 'path';
-import { readdir } from 'fs/promises';
-import logger from '@/config/logger';
+import { relative, resolve } from "path";
+import { readdir } from "fs/promises";
+import logger from "@/config/logger";
 
 /**
  * Load express routers
