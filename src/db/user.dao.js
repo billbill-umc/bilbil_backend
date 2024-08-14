@@ -28,3 +28,43 @@ export async function getUserById(id) {
         .where("id", id)
         .first();
 }
+
+/**
+ * @param {number} userId
+ * @return {Promise<{id: number, userId: number, url: string, isDeleted: number, createdAt: Date}[]>}
+ */
+export async function getUserAvatar(userId) {
+    return getQueryBuilder()("userAvatar")
+        .select("*")
+        .where("userId", userId);
+}
+
+/**
+ * @param {number} userId
+ */
+export async function deleteUserAvatar(userId) {
+    return getQueryBuilder()("userAvatar")
+        .where("userId", userId)
+        .update({ isDeleted: 1 });
+}
+
+/**
+ * @param {number} userId
+ * @param {string} url
+ */
+export async function createUserAvatar(userId, url) {
+    return getQueryBuilder()("userAvatar")
+        .insert({ userId, url });
+}
+
+/**
+ *
+ * @param {number} userId
+ * @param {username: string, phoneNumber: string} data
+ * @return {Promise<void>}
+ */
+export async function updateUser(userId, data) {
+    return getQueryBuilder()("user")
+        .where("id", userId)
+        .update(data);
+}

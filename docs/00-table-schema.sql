@@ -18,6 +18,7 @@ CREATE TABLE userAvatar
     userId    INT          NOT NULL,
     url       VARCHAR(512) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    isDeleted BOOLEAN   DEFAULT false,
     FOREIGN KEY (userId) REFERENCES user (id) ON DELETE CASCADE
 );
 
