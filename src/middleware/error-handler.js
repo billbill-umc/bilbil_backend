@@ -7,7 +7,7 @@ import { response, ResponseCode } from "@/config/response";
  */
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
-    logger.error(err);
+    logger.error("Internal server error.", err);
     res.status(500).send(response(ResponseCode.UNKNOWN_ERROR, null));
 };
 

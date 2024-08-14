@@ -22,8 +22,7 @@ export async function insertAreaToDatabase(areaData) {
     try {
         await insertAreaSiDo(areaData);
     } catch (e) {
-        logger.error("Failed to insert si/do area.");
-        logger.error(e);
+        logger.error("Failed to insert si/do area.", e);
 
         throw e;
     }
@@ -42,8 +41,7 @@ export async function insertAreaToDatabase(areaData) {
                 parentSiDoCode
             })));
         } catch (e) {
-            logger.error(`Failed to insert si/gun/gu area for ${siDoData.siDo} (${siDoData.code})`);
-            logger.error(e);
+            logger.error(`Failed to insert si/gun/gu area for ${siDoData.siDo} (${siDoData.code})`, e);
         }
 
 
@@ -58,8 +56,7 @@ export async function insertAreaToDatabase(areaData) {
                     code, eubMyeonDong, parentSiGunGuCode
                 })));
             } catch (e) {
-                logger.error(`Failed to insert eub/myeon/dong area for ${siGunGuData.siGunGu} (${siGunGuData.code}) of ${siDoData.siDo} (${siDoData.code})`);
-                logger.error(e);
+                logger.error(`Failed to insert eub/myeon/dong area for ${siGunGuData.siGunGu} (${siGunGuData.code}) of ${siDoData.siDo} (${siDoData.code})`, e);
             }
         }
     }

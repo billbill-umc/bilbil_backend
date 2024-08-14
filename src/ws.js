@@ -113,7 +113,7 @@ export function initWebSocket(server) {
                         });
                     }
                 } catch (e) {
-                    logger.error(e);
+                    logger.error("[Socket.io] Failed to processing incoming message.", e);
                 }
             });
 
