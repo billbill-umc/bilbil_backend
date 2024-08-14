@@ -17,8 +17,7 @@ import { initS3Client } from "@/config/aws";
         const testConnection = await getDatabase().getConnection();
         await testConnection.release();
     } catch (e) {
-        logger.error("Failed to init database.");
-        logger.error(e);
+        logger.error("Failed to init database.", e);
         process.exit(1);
     }
 
@@ -28,8 +27,7 @@ import { initS3Client } from "@/config/aws";
         const testConnection = await getCache();
         await testConnection.disconnect();
     } catch (e) {
-        logger.error("Failed to init cache.");
-        logger.error(e);
+        logger.error("Failed to init cache.", e);
         process.exit(1);
     }
 
@@ -37,7 +35,7 @@ import { initS3Client } from "@/config/aws";
         logger.info("Initializing S3 client.");
         await initS3Client();
     } catch (e) {
-        console.error(e);
+        logger.error("Failed to initialized AWS S3 client.", e);
     }
 
     try {
@@ -51,8 +49,7 @@ import { initS3Client } from "@/config/aws";
             logger.info("Area data already exists in database. Skip inserting area data to database.");
         }
     } catch (e) {
-        logger.error("Failed to insert area data to database.");
-        logger.error(e);
+        logger.error("Failed to insert area data to database.", e);
         process.exit(1);
     }
 
@@ -66,16 +63,15 @@ import { initS3Client } from "@/config/aws";
         server.listen(port);
         logger.info(`Server listening on port ${port}.`);
     } catch (e) {
-        logger.error("Failed to init web server.");
-        logger.error(e.message);
+        logger.error("Failed to init web server.", e);
         process.exit(1);
     }
 
     process.on("exit", () => {
         const dbConnection = getDatabase();
-        dbConnection.close().catch(e => logger.error(e.message));
+        dbConnection.close().catch(e => logger.error("Failed to disconnect db.", e));
 
         getCache().then(connection => connection.disconnect())
-            .catch(e => logger.error(e.message));
+            .catch(e => logger.error("Failed to disconnect cache", e));
     });
 })();
