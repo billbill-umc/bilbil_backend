@@ -7,16 +7,21 @@ import { createRentalRequest } from './rent.service.js';
  * @return {Promise<void>}
  */
 export async function requestRentalController(req, res) {
-    try {
-        const { postId } = req.params; // URL에서 포스트 ID 추출
-        const borrowerId = req.user.id; // 인증된 사용자의 ID 추출
-        const { dateBegin, dateEnd } = req.body; // 요청 본문에서 데이터 추출
+  try {
+    const { postId } = req.params; // URL에서 포스트 ID 추출
 
-        // 대여 요청 생성
-        const rentalRequest = await createRentalRequest(postId, borrowerId, dateBegin, dateEnd);
-        res.status(201).json(rentalRequest); // 성공적으로 생성된 요청 반환
-    } catch (error) {
-        console.error('Error creating rental request:', error);
-        res.status(500).json({ error: 'Error creating rental request' }); // 서버 오류 응답
+    // 사용자 인증 확인
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ error: 'Unauthorized' });
     }
+
+    const borrowerId = req.user.id; // 인증된 사용자의 ID 추출
+    const { dateBegin, dateEnd } = req.body; // 요청 본문에서 데이터 추출
+
+    const rentalRequest = await createRentalRequest(postId, borrowerId, dateBegin, dateEnd);
+    res.status(201).json(rentalRequest);
+  } catch (error) {
+    console.error('Error creating rental request:', error);
+    res.status(500).json({ error: 'Error creating rental request' });
+  }
 }
