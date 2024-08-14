@@ -2,12 +2,10 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const FileStore = require('session-file-store')(session);
-const router = express.Router();  // 라우터를 정의하므로 이 부분은 유지
+const router = express.Router();
 const queries = require('../src/queries.js');  // DB 쿼리 함수 사용을 위해 필요
 const errors = require('../src/error.js');  // 에러 처리 함수 사용을 위해 필요
-
-// authCheck 모듈을 삭제하려면 내부 함수를 auth.js에서 직접 정의해야 하지만, 
-// authCheck의 함수가 그대로 사용된다면 authCheck는 유지해야 함
+const authCheck = require('./authCheck.js'); // 로그인 상태 확인 (정의된 상태여야 함)
 
 // 미들웨어 설정
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -19,14 +17,15 @@ router.use(session({
   saveUninitialized: true,
   store: new FileStore(),
 }));
+
 // 메인 페이지
 router.get('/main', (req, res) => {
   if (!authCheck.isOwner(req, res)) {
     return errors.handleUnauthorizedError(res);
   }
   res.status(200).json({
-    message: 'Welcome to the main page',
-    user: req.session.nickname || 'Guest'
+    message: '메인 페이지에 오신 것을 환영합니다',
+    user: req.session.nickname || '게스트'
   });
 });
 
@@ -52,14 +51,14 @@ router.post('/login_process', (request, response) => {
         request.session.is_logined = true;
         request.session.nickname = username;
         request.session.save(() => {
-          response.status(200).json({ message: 'Login successful' });
+          response.status(200).json({ message: '로그인 성공' });
         });
       } else {
-        errors.handleUnauthorizedError(response, 'Invalid username or password');
+        errors.handleUnauthorizedError(response, '아이디 또는 비밀번호가 잘못되었습니다.');
       }
     });
   } else {
-    errors.handleBadRequestError(response, 'Please provide username and password');
+    errors.handleBadRequestError(response, '아이디와 비밀번호를 입력해주세요.');
   }
 });
 
@@ -69,7 +68,7 @@ router.get('/logout', (request, response) => {
     if (err) {
       return errors.handleInternalServerError(response, err);
     }
-    response.status(200).json({ message: 'Logout successful' });
+    response.status(200).json({ message: '로그아웃 성공' });
   });
 });
 
@@ -83,18 +82,18 @@ router.post('/check_username', (request, response) => {
         return errors.handleInternalServerError(response, error);
       }
       if (results.length > 0) {
-        errors.handleConflictError(response, 'Username already exists');
+        errors.handleConflictError(response, '이미 존재하는 아이디입니다.');
       } else {
-        response.status(200).json({ message: 'Username is available' });
+        response.status(200).json({ message: '사용 가능한 아이디입니다.' });
       }
     });
   } else {
-    errors.handleBadRequestError(response, 'Please provide a username');
+    errors.handleBadRequestError(response, '아이디를 입력해주세요.');
   }
 });
 
 // 회원가입 프로세스
-router.post('/register_process', (request, response) => {
+router.post('/signin', (request, response) => {
   const { username, password, phone } = request.body;
 
   if (username && password && phone) {
@@ -102,23 +101,11 @@ router.post('/register_process', (request, response) => {
       if (error) {
         return errors.handleInternalServerError(response, error);
       }
-      response.status(200).json({ message: 'Registration successful' });
+      response.status(200).json({ message: '회원가입이 완료되었습니다.' });
     });
   } else {
-    errors.handleBadRequestError(response, 'Please fill out all fields');
+    errors.handleBadRequestError(response, '모든 필드를 입력해주세요.');
   }
 });
 
 module.exports = router;
-
-// 이메일 인증 링크 요청 후 회원가입 페이지로 이동
-async function handleSignupRequest() {
-    const email = document.getElementById('emailInput').value;
-    const password = document.getElementById('passwordInput').value;
-    
-    // 이메일 인증 링크 요청
-    await requestVerificationLink(email);
-
-    // 사용자에게 이메일 인증 링크 클릭 후 회원가입 페이지로 이동하라고 안내
-    alert('인증 링크가 이메일로 전송되었습니다. 링크를 클릭하여 회원가입을 완료해 주세요.');
-}
