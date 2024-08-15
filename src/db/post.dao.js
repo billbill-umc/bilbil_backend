@@ -147,3 +147,11 @@ export async function deletePostImage(imageId) {
         .where("id", "=", imageId)
         .update({ isDeleted: 1 });
 }
+
+/**
+ * @return {Promise<{id: number, name: string}[]>}
+ */
+export async function getPostCategories() {
+    return getQueryBuilder()("category")
+        .select("*");
+}

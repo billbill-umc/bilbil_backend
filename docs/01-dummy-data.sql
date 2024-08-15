@@ -1,13 +1,16 @@
 
-INSERT INTO user (email, userId, username, phoneNumber, password, salt)
-    VALUES ('example@mail.com', 'exampleUser1', 'user1', '010-0000-0000', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
+INSERT INTO user (email, username, phoneNumber, password, salt)
+    VALUES ('example@mail.com', 'user1', '010-0000-0000', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
 
-INSERT INTO user (email, userId, username, phoneNumber, password, salt)
-VALUES ('test@mail.com', 'testUser1', 'uusseerr', '010-1234-5678', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
+INSERT INTO user (email, username, phoneNumber, password, salt)
+VALUES ('test@mail.com', 'uusseerr', '010-1234-5678', '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
 
 
 INSERT INTO category (name)
-    VALUES ('의류'), ('가구'), ('가전제품'), ('생활용품'), ('도서/음반'), ('게임/취미'), ('반려동물용품'), ('기타');
+    VALUES ('의류'), ('화장품/뷰티'), ('식품'), ('주방용품'), ('생활용품'), ('홈/인테리어'), ('생활가전'), ('디지털가전'), ('스포츠/레저'), ('도서/음반'), ('완구/취미'), ('문구/오피스'), ('반려동물용품'), ('헬스/건강');
+
+INSERT INTO category (id, name)
+    VALUES (1000, '물물교환');
 
 INSERT INTO post (authorId, categoryId, areaCode, itemName, price, deposit, description, dateBegin, dateEnd, itemCondition)
     VALUES (1, 1, 1111010100, '물품명', 10000, 1000, '물품 설명', '2024-08-01 12:00:00', '2024-09-01 12:00:00', 'NEW');
