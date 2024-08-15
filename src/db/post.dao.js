@@ -58,14 +58,43 @@ export async function getPosts({ page, size, area, category }) {
 
 /**
  * @param {number} postId
- * @return {Promise<{id: number, authorId: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Date, itemCondition: string, isDeleted: number, createdAt: Date, updatedAt: Date}>}
+ * @return {Promise<{id: number, authorId: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Date, itemCondition: string, isDeleted: number, createdAt: Date, updatedAt: Date, authorName: string, authorAvatar: string}>}
  */
 export async function getPostById(postId) {
     return getQueryBuilder()("post")
-        .select("*")
-        .where("id", postId)
-        .andWhereNot("isDeleted", 1)
+        .select(
+            "post.id as id",
+            "post.categoryId as categoryId",
+            "post.areaCode as areaCode",
+            "post.itemName as itemName",
+            "post.price as price",
+            "post.deposit as deposit",
+            "post.description as description",
+            "post.dateBegin as dateBegin",
+            "post.dateEnd as dateEnd",
+            "post.itemCondition as itemCondition",
+            "post.createdAt as createdAt",
+            "post.updatedAt as updatedAt",
+            "user.id as authorId",
+            "user.username as authorName",
+            "userAvatar.url as authorAvatar"
+        )
+        .leftJoin("user", "post.authorId", "user.id")
+        .leftJoin("userAvatar", function() {
+            this.on("user.id", "=", "userAvatar.userId")
+                .andOn("userAvatar.isDeleted", "=", 0);
+        })
+        .where("post.id", "=", postId)
+        .where("post.isDeleted", "=", 0)
+        .where("user.isWithdraw", "=", 0)
         .first();
+}
+
+export async function getPostImages(postId) {
+    return getQueryBuilder()("postImage")
+        .select("id", "url")
+        .where("postId", "=", postId)
+        .where("isDeleted", "=", 0);
 }
 
 /**
