@@ -68,7 +68,6 @@ export async function CreateSignInMailService(req, res) {
     // send email
     const mailRes = await sendMail("bilbil <solid2113@naver.com>", targetEmail, "빌빌 회원가입 메일 인증 코드", generateSignInMailHtml(authCode));
 
-
     if (!mailRes.accepted.find(a => a === targetEmail)) {
         return response(ResponseCode.INVALID_EMAIL_ADDRESS, null);
     }
@@ -122,9 +121,8 @@ export async function SignInService(req, res) {
     const signInBodySchema = zod.object({
         email: zod.string().email()
             .endsWith(".ac.kr"),
-        id: zod.string().min(8)
-            .max(32)
-            .regex(/^[a-zA-Z0-9]*$/),
+        username: zod.string().min(2)
+            .max(24),
         password: zod.string().min(12)
             .max(32),
         phoneNumber: zod.string().regex(/^01([0|1|6|7|8|9])-([0-9]{3,4})-([0-9]{4})$/)
@@ -175,7 +173,7 @@ export async function SignInService(req, res) {
     const salt = generateSalt();
     const hashedPassword = await hashingPassword(req.body.password, salt);
 
-    await createUser(req.body.email, req.body.id, hashedPassword, salt, req.body.id, req.body.phoneNumber);
+    await createUser(req.body.email, hashedPassword, salt, req.body.username, req.body.phoneNumber);
 
     await cache.del(getSignInVerifiedMailKey(req.body.email));
     await cache.disconnect();
