@@ -14,21 +14,46 @@ export async function createPost(post) {
  * @param {number} size
  * @param {number} area
  * @param {number} category
- * @return {Promise<{id: number, authorId: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Date, itemCondition: string, isDeleted: number, createdAt: Date, updatedAt: Date}[]>}
+ * @return {Promise<{id: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Data, itemCondition: string, createdAt: Date, updatedAt: Date, imageUrl: string, authorId: number, authorName: string, authorAvatar: string}[]>}
  */
 export async function getPosts({ page, size, area, category }) {
-    const query = getQueryBuilder()("post");
+    const query = getQueryBuilder()("post")
+        .select("post.id as id",
+            "post.categoryId as categoryId",
+            "post.areaCode as areaCode",
+            "post.itemName as itemName",
+            "post.price as price",
+            "post.deposit as deposit",
+            "post.description as description",
+            "post.dateBegin as dateBegin",
+            "post.dateEnd as dateEnd",
+            "post.itemCondition as itemCondition",
+            "post.createdAt as createdAt",
+            "post.updatedAt as updatedAt",
+            "postImage.url as imageUrl",
+            "user.id as authorId",
+            "user.username as authorName",
+            "userAvatar.url as authorAvatar")
+        .leftJoin("postImage", function() {
+            this.on("post.id", "=", "postImage.postId")
+                .andOn("postImage.isDeleted", "=", 0);
+        })
+        .leftJoin("user", "post.authorId", "user.id")
+        .leftJoin("userAvatar", function() {
+            this.on("user.id", "=", "userAvatar.userId")
+                .andOn("userAvatar.isDeleted", "=", 0);
+        })
+        .where("post.isDeleted", "=", 0)
+        .where("user.isWithdraw", "=", 0)
+        .whereIn("post.areaCode", area);
 
-    query.offset((page - 1) * size)
-        .limit(size)
-        .whereIn("areaCode", area)
-        .andWhereNot("isDeleted", 1);
 
     if (category) {
-        query.andWhere("categoryId", category);
+        query.where("post.categoryId", "=", category);
     }
 
-    return query.select("*");
+    return query.offset((page - 1) * size)
+        .limit(size);
 }
 
 /**

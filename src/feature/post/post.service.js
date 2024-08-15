@@ -96,18 +96,17 @@ export async function GetPostsService(req, res) {
         params.category = Number(category);
     }
 
-    // TODO: ADD author data
-
     const posts = (await getPosts(params)).map(post => ({
         id: post.id,
         author: {
             id: post.authorId,
-            avatar: ""
+            username: post.authorName,
+            avatar: post.authorAvatar
         },
         itemName: post.itemName,
         description: post.description,
         condition: post.itemCondition,
-        thumbnail: "",
+        thumbnail: post.imageUrl,
         area: post.areaCode,
         price: post.price,
         deposit: post.deposit,
