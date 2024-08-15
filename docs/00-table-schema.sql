@@ -2,7 +2,6 @@ CREATE TABLE user
 (
     id          INT PRIMARY KEY AUTO_INCREMENT,
     email       VARCHAR(255) NOT NULL UNIQUE,
-    userId      VARCHAR(255) NOT NULL UNIQUE,
     username    VARCHAR(255) NOT NULL,
     phoneNumber VARCHAR(30)  NOT NULL,
     password    VARCHAR(512) NOT NULL,

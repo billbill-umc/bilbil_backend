@@ -5,8 +5,8 @@ import { GetTokenController, RefreshTokenController } from "@/feature/auth/auth.
 export default async function initAuthRouter() {
     const router = Router({ mergeParams: true });
 
-    router.get("/auth/token", asyncHandler(GetTokenController));
-    router.get("/auth/token/refresh", asyncHandler(RefreshTokenController));
+    router.post("/auth/token", asyncHandler(GetTokenController));
+    router.post("/auth/token/refresh", asyncHandler(RefreshTokenController));
 
     return router;
 }
