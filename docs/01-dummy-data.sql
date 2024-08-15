@@ -16,7 +16,7 @@ INSERT INTO post (authorId, categoryId, areaCode, itemName, price, deposit, desc
     VALUES (1, 1, 1111010100, '물품명', 10000, 1000, '물품 설명', '2024-08-01 12:00:00', '2024-09-01 12:00:00', 'NEW');
 
 INSERT INTO post (authorId, categoryId, areaCode, itemName, price, deposit, description, dateBegin, dateEnd, itemCondition)
-VALUES (2, 3, 1111010100, '물품명2', 100001, 10001, '물품 설명2', '2024-08-01 12:00:00', '2024-09-01 12:00:00', 'NEW');
+VALUES (1, 3, 1111010100, '물품명2', 100001, 10001, '물품 설명2', '2024-08-01 12:00:00', '2024-09-01 12:00:00', 'NEW');
 
 INSERT INTO chat (postId, senderId, receiverId)
     VALUES (1, 2, 1);

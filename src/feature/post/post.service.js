@@ -1,6 +1,6 @@
 import zod, { ZodError } from "zod";
 import { response, ResponseCode } from "@/config/response";
-import { createPost, deletePost, getPostById, getPosts, updatePost } from "@/db/post.dao";
+import { createPost, deletePost, getPostById, getPostImages, getPosts, updatePost } from "@/db/post.dao";
 
 /**
  * @param {import("express").Request} req
@@ -96,18 +96,17 @@ export async function GetPostsService(req, res) {
         params.category = Number(category);
     }
 
-    // TODO: ADD author data
-
     const posts = (await getPosts(params)).map(post => ({
         id: post.id,
         author: {
             id: post.authorId,
-            avatar: ""
+            username: post.authorName,
+            avatar: post.authorAvatar
         },
         itemName: post.itemName,
         description: post.description,
         condition: post.itemCondition,
-        thumbnail: "",
+        thumbnail: post.imageUrl,
         area: post.areaCode,
         price: post.price,
         deposit: post.deposit,
@@ -134,21 +133,19 @@ export async function GetPostService(req, res) {
     if (!post) {
         return response(ResponseCode.INVALID_POST_ID, null);
     }
+    const images = await getPostImages(id);
 
-    console.log(post);
-
-    // TODO: Add author data and image
     const postResponse = {
         id: post.id,
         author: {
             id: post.authorId,
-            username: "",
-            avatar: ""
+            username: post.authorName,
+            avatar: post.authorAvatar
         },
         itemName: post.itemName,
         itemCondition: post.itemCondition,
         category: post.categoryId,
-        images: [],
+        images: images.map(i => ({ id: i.id, url: i.url })),
         description: post.description,
         price: post.price,
         deposit: post.deposit,
