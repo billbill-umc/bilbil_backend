@@ -9,6 +9,7 @@ import { setLastMessageToCache } from "@/cache/chat";
  * @param {string} token
  * @return {{sub: string, aud: number, exp: number: iat: number} | undefined}
  */
+
 function authenticate(token) {
     const tokenSecret = process.env.TOKEN_SECRET;
 
@@ -113,7 +114,7 @@ export function initWebSocket(server) {
                         });
                     }
                 } catch (e) {
-                    logger.error("[Socket.io] Failed to processing incoming message.", e);
+                    logger.error(e);
                 }
             });
 

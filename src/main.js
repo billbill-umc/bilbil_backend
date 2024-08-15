@@ -11,67 +11,84 @@ import { initS3Client } from "@/config/aws";
 
 (async () => {
     try {
-        logger.info("Initializing database.");
+        // Initialize database and query builder
         await initDatabase();
         await initQueryBuilder();
-        const testConnection = await getDatabase().getConnection();
-        await testConnection.release();
+        logger.info("Database initialized and query builder set up.");
     } catch (e) {
-        logger.error("Failed to init database.", e);
+        logger.error("Failed to init database.");
+        logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
     try {
-        logger.info("Initializing cache.");
+        // Initialize cache
         await initCache();
-        const testConnection = await getCache();
-        await testConnection.disconnect();
+        logger.info("Cache initialized.");
     } catch (e) {
-        logger.error("Failed to init cache.", e);
+        logger.error("Failed to init cache.");
+        logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
     try {
-        logger.info("Initializing S3 client.");
-        await initS3Client();
-    } catch (e) {
-        logger.error("Failed to initialized AWS S3 client.", e);
-    }
-
-    try {
+        // Check and insert area data if needed
         logger.info("Checking if area data exists in database.");
         if (!await isAreaDataExist()) {
-            logger.info("Area data does not exist in database. Inserting area data to database.");
+            logger.info("Area data does not exist in database. Inserting area data.");
             const rawAreaRecords = await parseRawAreaCsv();
             const areaData = parseArea(rawAreaRecords);
             await insertAreaToDatabase(areaData);
         } else {
-            logger.info("Area data already exists in database. Skip inserting area data to database.");
+            logger.info("Area data already exists in database. Skipping insertion.");
         }
     } catch (e) {
-        logger.error("Failed to insert area data to database.", e);
+        logger.error("Failed to insert area data to database.");
+        logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
     try {
+        // Initialize Express server
         const port = process.env.PORT || 3000;
+        const app = await initExpress(); // Remove port if not used in initExpress
 
-        const app = await initExpress();
-        const server = createServer(app);
-        initWebSocket(server);
+        // Start the server
+        const server = app.listen(port, () => {
+            logger.info(`Server listening on port ${port}.`);
+        });
 
-        server.listen(port);
-        logger.info(`Server listening on port ${port}.`);
+        // Initialize WebSocket server
+        const wss = initWebsocket(server);
+        logger.info("WebSocket initialized.");
     } catch (e) {
-        logger.error("Failed to init web server.", e);
+        logger.error("Failed to init web server.");
+        logger.error(e.message);
+        logger.error(e.stack);
         process.exit(1);
     }
 
-    process.on("exit", () => {
-        const dbConnection = getDatabase();
-        dbConnection.close().catch(e => logger.error("Failed to disconnect db.", e));
+    // Handle process exit
+    process.on("exit", async () => {
+        try {
+            const dbConnection = getDatabase();
+            await dbConnection.close();
+        } catch (e) {
+            logger.error("Error closing database connection.");
+            logger.error(e.message);
+            logger.error(e.stack);
+        }
 
-        getCache().then(connection => connection.disconnect())
-            .catch(e => logger.error("Failed to disconnect cache", e));
+        try {
+            const cacheConnection = await getCache();
+            await cacheConnection.disconnect();
+        } catch (e) {
+            logger.error("Error disconnecting cache.");
+            logger.error(e.message);
+            logger.error(e.stack);
+        }
     });
 })();
