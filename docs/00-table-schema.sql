@@ -2,7 +2,6 @@ CREATE TABLE user
 (
     id          INT PRIMARY KEY AUTO_INCREMENT,
     email       VARCHAR(255) NOT NULL UNIQUE,
-    userId      VARCHAR(255) NOT NULL UNIQUE,
     username    VARCHAR(255) NOT NULL,
     phoneNumber VARCHAR(30)  NOT NULL,
     password    VARCHAR(512) NOT NULL,
@@ -18,6 +17,7 @@ CREATE TABLE userAvatar
     userId    INT          NOT NULL,
     url       VARCHAR(512) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    isDeleted BOOLEAN   DEFAULT false,
     FOREIGN KEY (userId) REFERENCES user (id) ON DELETE CASCADE
 );
 
@@ -133,10 +133,11 @@ CREATE TABLE chatMessage
 CREATE TABLE chatImage
 (
     id            INT PRIMARY KEY AUTO_INCREMENT,
-    chatMessageId INT          NOT NULL,
+    chatId        INT          NOT NULL,
     url           VARCHAR(512) NOT NULL,
     createdAt     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (chatMessageId) REFERENCES chatMessage (id) ON DELETE CASCADE
+    isDeleted BOOLEAN   DEFAULT false,
+    FOREIGN KEY (chatId) REFERENCES chat (id) ON DELETE CASCADE
 );
 
 CREATE TABLE notification

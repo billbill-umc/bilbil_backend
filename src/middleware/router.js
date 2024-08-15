@@ -20,8 +20,7 @@ export default async function loadRouters(parent, callerPath, basePath) {
             .filter(f => f.endsWith(".router.js"))
             .map(f => f.replace(".js", ""));
     } catch (e) {
-        logger.error("Failed to load router files.");
-        logger.error(e.message);
+        logger.error("Failed to load router files.", e);
         process.exit(1);
     }
 
@@ -34,8 +33,7 @@ export default async function loadRouters(parent, callerPath, basePath) {
             parent.use(router);
             logger.info(`Router imported from ${importFullUrl}.`);
         } catch (e) {
-            logger.error(`Failed to load router from ${importFullUrl}.js. Skip importing.`);
-            logger.error(e);
+            logger.error(`Failed to load router from ${importFullUrl}.js. Skip importing.`, e);
         }
     }
 }

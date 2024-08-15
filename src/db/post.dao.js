@@ -74,7 +74,7 @@ export async function getPostWithImages(postId) {
         .andWhereNot("post.isDeleted", 1)
         .andWhereNot("postImage.isDeleted", 1);
 
-    if (!rawPosts) return;
+    if (!rawPosts || rawPosts.length < 1) return;
 
     const post = {
         id: rawPosts[0].id,
@@ -135,6 +135,11 @@ export async function createPostImage(postId, url) {
         .insert({
             postId, url
         });
+}
+
+export async function createPostImages(postId, urls) {
+    return getQueryBuilder()("postImage")
+        .insert(urls.map(url => ({ postId, url })));
 }
 
 export async function deletePostImage(imageId) {

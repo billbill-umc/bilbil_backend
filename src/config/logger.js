@@ -1,4 +1,5 @@
-import { addColors, createLogger, format, transports } from "winston";
+import { addColors, createLogger, transports } from "winston";
+import { format } from "logform";
 import "winston-daily-rotate-file";
 
 const ERROR_LOG = process.env.ERROR_LOG;
@@ -8,15 +9,11 @@ const MAX_LOG_FILES = process.env.MAX_LOG_FILES ?? "14d";
 
 const consoleLogger = new transports.Console({
     format: format.combine(
+        format.errors({ stack: true }),
         format.colorize(),
-        format.timestamp(),
+        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
         format.printf(ctx => {
-            if (ctx.message instanceof Error) {
-                ctx.stack = ctx.message.stack;
-                ctx.message = ctx.message.message;
-            }
-            const { level, message, timestamp, stack } = ctx;
-            return `[${timestamp}][${level}] ${message ?? ""}${stack ? `\n${stack}` : ""}`;
+            return `[${ctx.timestamp}] [${ctx.level}] ${ctx.message}${ctx.stack ? `\n${ctx.stack}` : ""}`;
         })
     )
 });
