@@ -14,11 +14,12 @@ export async function createPost(post) {
  * @param {number} size
  * @param {number} area
  * @param {number} category
- * @return {Promise<{id: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Data, itemCondition: string, createdAt: Date, updatedAt: Date, imageUrl: string, authorId: number, authorName: string, authorAvatar: string}[]>}
+ * @return {Promise<{id: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Data, itemCondition: string, createdAt: Date, updatedAt: Date, imageUrl: string, authorId: number, authorName: string, authorAvatar: string, rentId: number}[]>}
  */
 export async function getPosts({ page, size, area, category }) {
     const query = getQueryBuilder()("post")
-        .select("post.id as id",
+        .select(
+            "post.id as id",
             "post.categoryId as categoryId",
             "post.areaCode as areaCode",
             "post.itemName as itemName",
@@ -33,10 +34,16 @@ export async function getPosts({ page, size, area, category }) {
             "postImage.url as imageUrl",
             "user.id as authorId",
             "user.username as authorName",
-            "userAvatar.url as authorAvatar")
+            "userAvatar.url as authorAvatar",
+            "rent.id as rentId"
+        )
         .leftJoin("postImage", function() {
             this.on("post.id", "=", "postImage.postId")
                 .andOn("postImage.isDeleted", "=", 0);
+        })
+        .leftJoin("rent", function() {
+            this.on("post.id", "=", "rent.postId")
+                .andOn("rent.isCanceled", "=", 0);
         })
         .leftJoin("user", "post.authorId", "user.id")
         .leftJoin("userAvatar", function() {
@@ -58,7 +65,7 @@ export async function getPosts({ page, size, area, category }) {
 
 /**
  * @param {number} postId
- * @return {Promise<{id: number, authorId: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Date, itemCondition: string, isDeleted: number, createdAt: Date, updatedAt: Date, authorName: string, authorAvatar: string}>}
+ * @return {Promise<{id: number, authorId: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Date, itemCondition: string, isDeleted: number, createdAt: Date, updatedAt: Date, authorName: string, authorAvatar: string, rentId: number}>}
  */
 export async function getPostById(postId) {
     return getQueryBuilder()("post")
@@ -77,8 +84,13 @@ export async function getPostById(postId) {
             "post.updatedAt as updatedAt",
             "user.id as authorId",
             "user.username as authorName",
-            "userAvatar.url as authorAvatar"
+            "userAvatar.url as authorAvatar",
+            "rent.id as rentId"
         )
+        .leftJoin("rent", function() {
+            this.on("post.id", "=", "rent.postId")
+                .andOn("rent.isCanceled", "=", 0);
+        })
         .leftJoin("user", "post.authorId", "user.id")
         .leftJoin("userAvatar", function() {
             this.on("user.id", "=", "userAvatar.userId")
