@@ -76,15 +76,9 @@ export async function GetPostsService(req, res) {
         params.size = Number(size);
     }
 
-    if (!area) {
-        return response(ResponseCode.BAD_REQUEST, null);
-    }
-
-    params.area = area.split(",").map(Number)
-        .filter(n => !isNaN(n));
-
-    if (params.area.length < 1) {
-        return response(ResponseCode.BAD_REQUEST, null);
+    if (area) {
+        params.area = area.split(",").map(Number)
+            .filter(n => !isNaN(n));
     }
 
     if (!category) {

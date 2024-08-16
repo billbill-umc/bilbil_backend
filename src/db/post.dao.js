@@ -51,9 +51,12 @@ export async function getPosts({ page, size, area, category }) {
                 .andOn("userAvatar.isDeleted", "=", 0);
         })
         .where("post.isDeleted", "=", 0)
-        .where("user.isWithdraw", "=", 0)
-        .whereIn("post.areaCode", area);
+        .where("user.isWithdraw", "=", 0);
 
+
+    if (area) {
+        query.whereIn("post.areaCode", area);
+    }
 
     if (category) {
         query.where("post.categoryId", "=", category);
