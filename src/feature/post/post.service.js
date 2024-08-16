@@ -1,6 +1,6 @@
 import zod, { ZodError } from "zod";
 import { response, ResponseCode } from "@/config/response";
-import { createPost, deletePost, getPostById, getPostImages, getPosts, updatePost } from "@/db/post.dao";
+import { createPost, deletePost, getFavorite, getPostById, getPostImages, getPosts, updatePost } from "@/db/post.dao";
 
 /**
  * @param {import("express").Request} req
@@ -81,13 +81,19 @@ export async function GetPostsService(req, res) {
             .filter(n => !isNaN(n));
     }
 
-    if (!category) {
-        params.category = null;
-    } else {
-        if (isNaN(Number(category))) {
+    if (category) {
+        const nCategory = Number(category);
+        if (isNaN(nCategory)) {
             return response(ResponseCode.BAD_REQUEST, null);
         }
-        params.category = Number(category);
+
+        if (nCategory === 0) {
+            params.category = null;
+        } else if (nCategory === 1000) {
+            params.category = Array.from(Array(14)).map((_, i) => 1000 + 1 + i);
+        } else {
+            params.category = nCategory;
+        }
     }
 
     const posts = (await getPosts(params)).map(post => ({
@@ -118,6 +124,13 @@ export async function GetPostsService(req, res) {
  * @return {Promise<void>}
  */
 export async function GetPostService(req, res) {
+    const { user } = req;
+    const userId = user.aud;
+
+    if (!userId) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
     const id = Number(req.params.id);
 
     if (isNaN(id)) {
@@ -129,6 +142,8 @@ export async function GetPostService(req, res) {
         return response(ResponseCode.INVALID_POST_ID, null);
     }
     const images = await getPostImages(id);
+
+    const favorite = await getFavorite(id, userId);
 
     const postResponse = {
         id: post.id,
@@ -148,6 +163,7 @@ export async function GetPostService(req, res) {
         dateBegin: Math.floor(post.dateBegin / 1000),
         dateEnd: post.dateEnd ? Math.floor(post.dateEnd / 1000) : null,
         isLent: !!post.rentId,
+        isFavorite: !!favorite,
         createdAt: Math.floor(post.createdAt / 1000),
         updatedAt: Math.floor(post.updatedAt / 1000)
     };
