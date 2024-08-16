@@ -1,5 +1,4 @@
-import { addColors, createLogger, transports } from "winston";
-import { format } from "logform";
+import { addColors, createLogger, format, transports } from "winston";
 import "winston-daily-rotate-file";
 
 const ERROR_LOG = process.env.ERROR_LOG;

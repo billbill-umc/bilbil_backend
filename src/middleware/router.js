@@ -1,5 +1,6 @@
 import { relative, resolve } from "path";
 import { readdir } from "fs/promises";
+import listEndpoints from "express-list-endpoints";
 import logger from "@/config/logger";
 
 /**
@@ -31,7 +32,9 @@ export default async function loadRouters(parent, callerPath, basePath) {
         try {
             const router = await routerInitFunction();
             parent.use(router);
-            logger.info(`Router imported from ${importFullUrl}.`);
+            const endpoints = listEndpoints(router);
+            const endpointLogging = endpoints.map(e => `${e.methods.join("|")} ${e.path}`).join("\n\t\t\t\t");
+            logger.info(`Router imported from ${importFullUrl} with endpoints:\n\t\t\t\t${endpointLogging}`);
         } catch (e) {
             logger.error(`Failed to load router from ${importFullUrl}.js. Skip importing.`, e);
         }
