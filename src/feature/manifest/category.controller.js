@@ -6,6 +6,6 @@ import { GetCategoryManifestService } from "@/feature/manifest/category.service"
  * @return {Promise<void>}
  */
 export async function GetCategoryManifestController(req, res) {
-    const response = await GetCategoryManifestService();
+    const response = await GetCategoryManifestService(req, res);
     res.send(response);
 }
