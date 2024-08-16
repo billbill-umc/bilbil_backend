@@ -63,7 +63,6 @@ export async function CreateSignInMailService(req, res) {
 
     // set state, auth, email to cache with 10 minutes
     await cache.set(getSignInMailKey(stateCode), JSON.stringify(state), "EX", 60 * 10);
-    await cache.disconnect();
 
     // send email
     const mailRes = await sendMail("bilbil <solid2113@naver.com>", targetEmail, "빌빌 회원가입 메일 인증 코드", generateSignInMailHtml(authCode));
@@ -107,7 +106,6 @@ export async function VerifyEmailService(req, res) {
     }
 
     await cache.set(getSignInVerifiedMailKey(email), "true", "EX", 60 * 30);
-    await cache.disconnect();
 
     return response(ResponseCode.SUCCESS, null);
 }
@@ -176,7 +174,6 @@ export async function SignInService(req, res) {
     await createUser(req.body.email, hashedPassword, salt, req.body.username, req.body.phoneNumber);
 
     await cache.del(getSignInVerifiedMailKey(req.body.email));
-    await cache.disconnect();
 
     return response(ResponseCode.SUCCESS, null);
 }
