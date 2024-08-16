@@ -12,8 +12,8 @@ export async function createPost(post) {
 /**
  * @param {number} page
  * @param {number} size
- * @param {number} area
- * @param {number} category
+ * @param {number[]} area
+ * @param {number[]} category
  * @return {Promise<{id: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, dateBegin: Date, dateEnd: Data, itemCondition: string, createdAt: Date, updatedAt: Date, imageUrl: string, authorId: number, authorName: string, authorAvatar: string, rentId: number}[]>}
  */
 export async function getPosts({ page, size, area, category }) {
@@ -59,7 +59,7 @@ export async function getPosts({ page, size, area, category }) {
     }
 
     if (category) {
-        query.where("post.categoryId", "=", category);
+        query.whereIn("post.categoryId", category);
     }
 
     return query.offset((page - 1) * size)
