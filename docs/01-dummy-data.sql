@@ -6,6 +6,7 @@ INSERT INTO user (email, username, phoneNumber, password, salt)
 VALUES ('test@mail.com', 'uusseerr', '010-1234-5678',
         '29465fd5f8364e1956c6e5193d7aa741e4bab77c0db084e4b5c2fc607da4d57e', 'qweasdzxc');
 
+SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
 
 INSERT INTO category (id, name)
 VALUES (0, '전체'),
@@ -40,6 +41,8 @@ VALUES (1000, '물물교환 - 전체'),
        (1012, '물물교환 - 문구/오피스'),
        (1013, '물물교환 - 반려동물용품'),
        (1014, '물물교환 - 헬스/건강');
+
+SET SQL_MODE = 'NO_ENGINE_SUBSTITUTION';
 
 INSERT INTO post (authorId, categoryId, areaCode, itemName, price, deposit, description, dateBegin, dateEnd,
                   itemCondition)
