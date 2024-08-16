@@ -290,3 +290,24 @@ export async function cancelPostRent(postId) {
         .where("postId", postId)
         .update({ isCanceled: 1 });
 }
+
+
+export async function getFavorite(postId, userId) {
+    return getQueryBuilder()("favorite")
+        .select("*")
+        .where("postId", postId)
+        .where("userId", userId)
+        .first();
+}
+
+export async function createFavorite(postId, userId) {
+    return getQueryBuilder()("favorite")
+        .insert({ postId, userId });
+}
+
+export async function deleteFavorite(postId, userId) {
+    return getQueryBuilder()("favorite")
+        .where("postId", postId)
+        .where("userId", userId)
+        .delete();
+}
