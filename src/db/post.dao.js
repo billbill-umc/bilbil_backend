@@ -209,3 +209,69 @@ export async function getPostCategories() {
     return getQueryBuilder()("category")
         .select("*");
 }
+
+/**
+ * @param {number} postId
+ * @param {number} userId
+ * @param {Date} dateBegin
+ * @param {Date} dateEnd
+ */
+export async function createPostRentRequest(postId, userId, dateBegin, dateEnd) {
+    return getQueryBuilder()("rentRequest")
+        .insert({ postId, borrowerId: userId, dateBegin, dateEnd });
+}
+
+/**
+ * @param {number} postId
+ * @param {number} borrowerId
+ * @return {Promise<{id: number, postId: number, borrowerId: number, dateBegin: Date, dateEnd: Date, isCanceled: number, createdAt: Date}>}
+ */
+export async function getPostRentRequestByPostAndUser(postId, borrowerId) {
+    return getQueryBuilder()("rentRequest")
+        .select("*")
+        .where("postId", postId)
+        .where("borrowerId", borrowerId)
+        .where("isCanceled", 0)
+        .first();
+}
+
+/**
+ * @param {number} postId
+ * @param {number} borrowerId
+ */
+export async function cancelPostRentRequest(postId, borrowerId) {
+    return getQueryBuilder()("rentRequest")
+        .where("postId", postId)
+        .where("borrowerId", borrowerId)
+        .update({ isCanceled: 1 });
+}
+
+/**
+ * @param {number} postId
+ * @return {Promise<{id: number, postId: number, requestId: number, isCanceled: number, createdAt: Date}>}
+ */
+export async function getPostRent(postId) {
+    return getQueryBuilder()("rent")
+        .select("*")
+        .where("postId", postId)
+        .where("isCanceled", 0)
+        .first();
+}
+
+/**
+ * @param {number} postId
+ * @param {number} requestId
+ */
+export async function createPostRent(postId, requestId) {
+    return getQueryBuilder()("rent")
+        .insert({ postId, requestId });
+}
+
+/**
+ * @param {number} postId
+ */
+export async function cancelPostRent(postId) {
+    return getQueryBuilder()("rent")
+        .where("postId", postId)
+        .update({ isCanceled: 1 });
+}
