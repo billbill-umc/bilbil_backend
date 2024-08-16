@@ -1,4 +1,3 @@
-import { response, ResponseCode } from "@/config/response";
 import { getCategoryManifestFromCache, setCategoryManifestToCache } from "@/cache/category-manifest";
 import { getPostCategories } from "@/db/post.dao";
 
@@ -15,5 +14,5 @@ export async function GetCategoryManifestService(req, res) {
         await setCategoryManifestToCache({ categories });
     }
 
-    return response(ResponseCode.SUCCESS, { categories });
+    return categories;
 }

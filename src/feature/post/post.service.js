@@ -81,13 +81,19 @@ export async function GetPostsService(req, res) {
             .filter(n => !isNaN(n));
     }
 
-    if (!category) {
-        params.category = null;
-    } else {
-        if (isNaN(Number(category))) {
+    if (category) {
+        const nCategory = Number(category);
+        if (isNaN(nCategory)) {
             return response(ResponseCode.BAD_REQUEST, null);
         }
-        params.category = Number(category);
+
+        if (nCategory === 0) {
+            params.category = null;
+        } else if (nCategory === 1000) {
+            params.category = Array.from(Array(14)).map((_, i) => 1000 + 1 + i);
+        } else {
+            params.category = nCategory;
+        }
     }
 
     const posts = (await getPosts(params)).map(post => ({
