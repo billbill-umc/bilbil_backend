@@ -49,7 +49,6 @@ export async function GetTokenService(req, res) {
     );
     const cache = await getCache();
     await cache.set(getRefreshTokenKey(refreshToken), user.id, "EX", 60 * 60 * 24 * 7);
-    await cache.disconnect();
 
 
     return response(ResponseCode.SUCCESS, { accessToken, refreshToken });

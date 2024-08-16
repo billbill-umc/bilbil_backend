@@ -24,8 +24,7 @@ import { initS3Client } from "@/config/aws";
     try {
         logger.info("Initializing cache.");
         await initCache();
-        const testConnection = await getCache();
-        await testConnection.disconnect();
+        await getCache();
     } catch (e) {
         logger.error("Failed to init cache.", e);
         process.exit(1);
