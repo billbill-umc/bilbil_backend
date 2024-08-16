@@ -110,6 +110,7 @@ export async function GetPostsService(req, res) {
         area: post.areaCode,
         price: post.price,
         deposit: post.deposit,
+        isLent: !!post.rentId,
         createdAt: Math.floor(post.createdAt / 1000),
         updatedAt: Math.floor(post.updatedAt / 1000)
     }));
@@ -152,9 +153,9 @@ export async function GetPostService(req, res) {
         area: post.areaCode,
         dateBegin: Math.floor(post.dateBegin / 1000),
         dateEnd: post.dateEnd ? Math.floor(post.dateEnd / 1000) : null,
+        isLent: !!post.rentId,
         createdAt: Math.floor(post.createdAt / 1000),
-        updatedAt: Math.floor(post.updatedAt / 1000),
-        isLent: false
+        updatedAt: Math.floor(post.updatedAt / 1000)
     };
 
     return response(ResponseCode.SUCCESS, postResponse);
