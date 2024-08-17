@@ -14,9 +14,13 @@ import { initS3Client } from "@/config/aws";
         logger.info("Initializing database.");
         await initDatabase();
         await initQueryBuilder();
+        logger.info("Database initialized and query builder set up.");
         const testConnection = await getDatabase().getConnection();
         await testConnection.release();
     } catch (e) {
+        logger.error("Failed to init database.");
+        logger.error(e.message);
+        logger.error(e.stack);
         logger.error("Failed to init database.", e);
         process.exit(1);
     }
@@ -40,12 +44,12 @@ import { initS3Client } from "@/config/aws";
     try {
         logger.info("Checking if area data exists in database.");
         if (!await isAreaDataExist()) {
-            logger.info("Area data does not exist in database. Inserting area data to database.");
+            logger.info("Area data does not exist in database. Inserting area data.");
             const rawAreaRecords = await parseRawAreaCsv();
             const areaData = parseArea(rawAreaRecords);
             await insertAreaToDatabase(areaData);
         } else {
-            logger.info("Area data already exists in database. Skip inserting area data to database.");
+            logger.info("Area data already exists in database. Skipping insertion.");
         }
     } catch (e) {
         logger.error("Failed to insert area data to database.", e);
@@ -53,6 +57,7 @@ import { initS3Client } from "@/config/aws";
     }
 
     try {
+        // Initialize Express server
         const port = process.env.PORT || 3000;
 
         const app = await initExpress();

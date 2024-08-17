@@ -1,5 +1,5 @@
 import passport from "passport";
-import BearerStrategy from "passport-http-bearer";
+import { Strategy as BearerStrategy } from "passport-http-bearer";
 import { verify } from "jsonwebtoken";
 import logger from "@/config/logger";
 
@@ -23,10 +23,11 @@ passport.use(new BearerStrategy.Strategy((token, done) => {
 
     verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            const e = new Passport401Error;
+            const e = new Passport401Error();
             return done(e);
         }
-
         done(null, decoded);
     });
 }));
+
+export default passport;
