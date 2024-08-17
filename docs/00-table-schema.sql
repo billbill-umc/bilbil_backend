@@ -80,7 +80,7 @@ CREATE TABLE postImage
     FOREIGN KEY (postId) REFERENCES post (id) ON DELETE CASCADE
 );
 
-CREATE TABLE lent
+CREATE TABLE rentRequest
 (
     id         INT PRIMARY KEY AUTO_INCREMENT,
     postId     INT NOT NULL,
@@ -91,6 +91,19 @@ CREATE TABLE lent
     createdAt  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (postId) REFERENCES post (id) ON DELETE CASCADE,
     FOREIGN KEY (borrowerId) REFERENCES user (id)
+);
+
+
+
+CREATE TABLE rent
+(
+    id         INT PRIMARY KEY AUTO_INCREMENT,
+    postId     INT NOT NULL,
+    requestId  INT NOT NULL,
+    isCanceled BOOLEAN   DEFAULT false,
+    createdAt  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (postId) REFERENCES post (id) ON DELETE CASCADE,
+    FOREIGN KEY (requestId) REFERENCES rentRequest (id) ON DELETE CASCADE
 );
 
 CREATE TABLE interestPost
