@@ -60,6 +60,7 @@ const ResponseCode = {
     // posts/rent
     INVALID_RENT_REQUEST: { success: false, code: "INVALID_RENT_REQUEST", message: "잘못된 대여 요청 입니다." },
     ALREADY_LENT: { success: false, code: "ALREADY_LENT", message: "이미 대여 중인 상품입니다." },
+    ALREADY_REVIEWED: { success: false, code: "ALREADY_REVIEWED", message: "이미 리뷰를 작성한 상품입니다." },
 
     // posts/images
     INVALID_MIME_TYPE: { success: false, code: "INVALID_MIME_TYPE", message: "지원하지 않는 파일 형식입니다. (jpg, jpeg, png 만 가능합니다.)" },

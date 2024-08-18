@@ -311,3 +311,33 @@ export async function deleteFavorite(postId, userId) {
         .where("userId", userId)
         .delete();
 }
+
+export async function getPostRentByBorrowerId(postId, borrowerId) {
+    return getQueryBuilder()("rent")
+        .select(
+            "rent.id as id",
+            "rentRequest.id as requestId",
+            "rentRequest.borrowerId as borrowerId",
+            "rentRequest.postId as postId",
+            "rentRequest.dateBegin as dateBegin",
+            "rentRequest.dateEnd as dateEnd"
+        )
+        .join("rentRequest", "rent.requestId", "rentRequest.id")
+        .where("rent.postId", postId)
+        .where("rentRequest.borrowerId", borrowerId)
+        .where("rent.isCanceled", 0)
+        .first();
+}
+
+export async function createPostRentReview(postId, authorId, rating, content) {
+    return getQueryBuilder()("rentReview")
+        .insert({ postId, authorId, rating, content });
+}
+
+export async function getPostRentReview(postId, authorId) {
+    return getQueryBuilder()("rentReview")
+        .select("*")
+        .where("postId", postId)
+        .where("authorId", authorId)
+        .first();
+}
