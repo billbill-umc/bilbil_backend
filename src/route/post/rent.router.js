@@ -5,6 +5,7 @@ import {
     AcceptRequestController,
     CancelAcceptController,
     CancelRequestController,
+    CreateRentReviewController,
     RequestRentController
 } from "@/feature/post/rent/rent.controller";
 
@@ -33,6 +34,12 @@ export default async function initRentRouter() {
         "/posts/:postId/rent/accept",
         passport.authenticate("bearer", { session: false, failWithError: true }),
         asyncHandler(CancelAcceptController)
+    );
+
+    router.post(
+        "/posts/:postId/rent/review",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(CreateRentReviewController)
     );
 
     return router;

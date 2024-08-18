@@ -2,6 +2,7 @@ import {
     AcceptRequestService,
     CancelAcceptService,
     CancelRequestService,
+    CreateRentReviewService,
     RequestRentService
 } from "@/feature/post/rent/rent.service";
 
@@ -35,7 +36,22 @@ export async function AcceptRequestController(req, res) {
     res.send(response);
 }
 
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
+ */
 export async function CancelAcceptController(req, res) {
     const response = await CancelAcceptService(req, res);
+    res.send(response);
+}
+
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
+ */
+export async function CreateRentReviewController(req, res) {
+    const response = await CreateRentReviewService(req, res);
     res.send(response);
 }
