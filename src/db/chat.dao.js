@@ -37,7 +37,7 @@ export async function getChatList(userId) {
 /**
  * @typedef {Object} User
  * @property {number} id
- * @property {string} email
+ * @property {string} username
  * @property {string | null} avatarUrl
  */
 
@@ -49,10 +49,13 @@ export async function getUserForChat(userId) {
     return getQueryBuilder()("user")
         .select(
             "user.id as id",
-            "user.email as email",
+            "user.username as username",
             "userAvatar.url as avatarUrl"
         )
-        .leftJoin("userAvatar", "user.id", "userAvatar.userId")
+        .leftJoin("userAvatar", function() {
+            this.on("user.id", "userAvatar.userId")
+                .andOn("userAvatar.isDeleted", 0);
+        })
         .where("user.id", userId)
         .first();
 }
