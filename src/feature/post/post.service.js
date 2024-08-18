@@ -92,7 +92,7 @@ export async function GetPostsService(req, res) {
         } else if (nCategory === 1000) {
             params.category = Array.from(Array(14)).map((_, i) => 1000 + 1 + i);
         } else {
-            params.category = nCategory;
+            params.category = [ nCategory ];
         }
     }
 
