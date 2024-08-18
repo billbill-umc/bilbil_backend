@@ -39,7 +39,7 @@ export async function GetChattingsService(req, res) {
             },
             user: {
                 id: user.id,
-                email: user.email,
+                username: user.username,
                 avatar: user.avatarUrl
             },
             lastMessage: lastMessage
