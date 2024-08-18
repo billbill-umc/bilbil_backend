@@ -96,6 +96,18 @@ CREATE TABLE rentRequest
     FOREIGN KEY (borrowerId) REFERENCES user (id)
 );
 
+CREATE TABLE rentReview
+(
+    id         INT PRIMARY KEY AUTO_INCREMENT,
+    postId     INT NOT NULL,
+    authorId  INT NOT NULL,
+    rating     INT NOT NULL,
+    content    TEXT NOT NULL,
+    createdAt  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (postId) REFERENCES post (id) ON DELETE CASCADE,
+    FOREIGN KEY (authorId) REFERENCES user (id) ON DELETE CASCADE
+);
+
 CREATE TABLE rent
 (
     id         INT PRIMARY KEY AUTO_INCREMENT,

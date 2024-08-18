@@ -4,9 +4,12 @@ import {
     cancelPostRentRequest,
     createPostRent,
     createPostRentRequest,
+    createPostRentReview,
     getPostById,
     getPostRent,
-    getPostRentRequestByPostAndUser
+    getPostRentByBorrowerId,
+    getPostRentRequestByPostAndUser,
+    getPostRentReview
 } from "@/db/post.dao";
 import zod, { ZodError } from "zod";
 
@@ -166,6 +169,56 @@ export async function CancelAcceptService(req, res) {
     }
 
     await cancelPostRent(postId);
+
+    return response(ResponseCode.SUCCESS, null);
+}
+
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<unknown>}
+ */
+export async function CreateRentReviewService(req, res) {
+    const { user } = req;
+    const userId = user.aud;
+
+    if (!userId) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
+    const postId = Number(req.params.postId);
+    if (isNaN(postId)) {
+        return response(ResponseCode.INVALID_POST_ID, null);
+    }
+    const post = await getPostById(postId);
+    if (!post) {
+        return response(ResponseCode.INVALID_POST_ID, null);
+    }
+
+    const rent = await getPostRentByBorrowerId(postId, userId);
+    if (!rent) {
+        return response(ResponseCode.INVALID_RENT_REQUEST, null);
+    }
+
+    const review = await getPostRentReview(postId, userId);
+    if (review) {
+        return response(ResponseCode.ALREADY_REVIEWED, null);
+    }
+
+    const reviewRequestBodySchema = zod.object({
+        rating: zod.number().min(1)
+            .max(5),
+        content: zod.string()
+    });
+
+    try {
+        reviewRequestBodySchema.parse(req.body);
+    } catch (e) {
+        if (e instanceof ZodError) return response(ResponseCode.BAD_REQUEST, { issues: e.issues });
+        return response(ResponseCode.BAD_REQUEST, null);
+    }
+
+    await createPostRentReview(rent.postId, userId, req.body.rating, req.body.content);
 
     return response(ResponseCode.SUCCESS, null);
 }
