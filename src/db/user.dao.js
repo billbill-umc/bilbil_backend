@@ -41,6 +41,30 @@ export async function getUserAvatar(userId) {
 
 /**
  * @param {number} userId
+ * @return {Promise<{id: number, email: string, username: string, phoneNumber: string, avatar: string, createdAt: Date, updatedAt: Date}>}
+ */
+export async function getUserWithAvatar(userId) {
+    return getQueryBuilder()("user")
+        .select(
+            "user.id as id",
+            "user.email as email",
+            "user.username as username",
+            "user.phoneNumber as phoneNumber",
+            "user.createdAt as createdAt",
+            "user.updatedAt as updatedAt",
+            "userAvatar.url as avatar"
+        )
+        .leftJoin("userAvatar", function() {
+            this.on("user.id", "userAvatar.userId")
+                .andOn("userAvatar.isDeleted", 0);
+        })
+        .where("user.id", userId)
+        .andWhereNot("user.isWithdraw", 1)
+        .first();
+}
+
+/**
+ * @param {number} userId
  */
 export async function deleteUserAvatar(userId) {
     return getQueryBuilder()("userAvatar")

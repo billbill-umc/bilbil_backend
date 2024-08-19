@@ -70,7 +70,10 @@ const ResponseCode = {
     INVALID_EMAIL_ADDRESS: { success: false, code: "INVALID_EMAIL_ADDRESS", message: "잘못된 이메일 주소입니다." },
     CODE_NOT_MATCH: { success: false, code: "CODE_NOT_MATCH", message: "인증 코드가 일치하지 않습니다." },
     INVALID_PASSWORD: { success: false, code: "INVALID_PASSWORD", message: "잘못된 비밀번호입니다." },
-    INVALID_REFRESH_TOKEN: { success: false, code: "INVALID_REFRESH_TOKEN", message: "잘못된 리프래시 토큰입니다." }
+    INVALID_REFRESH_TOKEN: { success: false, code: "INVALID_REFRESH_TOKEN", message: "잘못된 리프래시 토큰입니다." },
+
+    // users
+    INVALID_USER_ID: { success: false, code: "INVALID_USER_ID", message: "잘못된 사용자 ID 입니다." }
 
     // add more response messages here
 };

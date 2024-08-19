@@ -105,6 +105,33 @@ export async function getPostById(postId) {
         .first();
 }
 
+/**
+ *
+ * @param {number} authorId
+ * @return {Promise<{id: number, categoryId: number, areaCode: number, itemName: string, price: number, deposit: number, description: string, itemCondition: string, createdAt: Date, updatedAt: Date, reviewId: number, reviewRating: number, reviewContent: string}[]>}
+ */
+export async function getPostsByAuthorId(authorId) {
+    return getQueryBuilder()("post")
+        .leftJoin("rentReview", "post.id", "rentReview.postId")
+        .select(
+            "post.id as id",
+            "post.categoryId as categoryId",
+            "post.areaCode as areaCode",
+            "post.itemName as itemName",
+            "post.price as price",
+            "post.deposit as deposit",
+            "post.description as description",
+            "post.itemCondition as itemCondition",
+            "post.createdAt as createdAt",
+            "post.updatedAt as updatedAt",
+            "rentReview.id as reviewId",
+            "rentReview.rating as reviewRating",
+            "rentReview.content as reviewContent"
+        )
+        .where("post.authorId", authorId)
+        .where("post.isDeleted", 0);
+}
+
 export async function getPostImages(postId) {
     return getQueryBuilder()("postImage")
         .select("id", "url")
@@ -300,6 +327,33 @@ export async function getFavorite(postId, userId) {
         .first();
 }
 
+export async function getFavoritesByUserId(userId) {
+    return getQueryBuilder()("favorite")
+        .select(
+            "post.id as id",
+            "post.authorId as authorId",
+            "post.categoryId as categoryId",
+            "post.areaCode as areaCode",
+            "post.itemName as itemName",
+            "post.price as price",
+            "post.deposit as deposit",
+            "post.description as description",
+            "post.itemCondition as itemCondition",
+            "post.createdAt as createdAt",
+            "post.updatedAt as updatedAt",
+            "user.username as authorName",
+            "userAvatar.url as authorAvatar"
+        )
+        .join("post", "favorite.postId", "post.id")
+        .join("user", "post.authorId", "user.id")
+        .leftJoin("userAvatar", function() {
+            this.on("user.id", "=", "userAvatar.userId")
+                .andOn("userAvatar.isDeleted", "=", 0);
+        })
+        .where("favorite.userId", userId)
+        .where("post.isDeleted", 0);
+}
+
 export async function createFavorite(postId, userId) {
     return getQueryBuilder()("favorite")
         .insert({ postId, userId });
@@ -340,4 +394,25 @@ export async function getPostRentReview(postId, authorId) {
         .where("postId", postId)
         .where("authorId", authorId)
         .first();
+}
+
+export async function getPostRentReviewsByUserId(authorId) {
+    return getQueryBuilder()("rentReview")
+        .select(
+            "post.id as id",
+            "post.categoryId as categoryId",
+            "post.areaCode as areaCode",
+            "post.itemName as itemName",
+            "post.price as price",
+            "post.deposit as deposit",
+            "post.description as description",
+            "post.itemCondition as itemCondition",
+            "post.createdAt as createdAt",
+            "post.updatedAt as updatedAt",
+            "rentReview.id as reviewId",
+            "rentReview.rating as reviewRating",
+            "rentReview.content as reviewContent"
+        )
+        .join("post", "rentReview.postId", "post.id")
+        .where("rentReview.authorId", authorId);
 }

@@ -5,7 +5,9 @@ import {
     AfterCreateUserAvatarController,
     BeforeCreateUserAvatarController,
     DeleteUserAvatarController,
-    EditUserController
+    EditUserController,
+    GetCurrentUserProfileController,
+    GetUserProfileController
 } from "@/feature/user/user.controller";
 import imageUploadErrorHandler from "@/middleware/image-upload-error-handler";
 import multer from "multer";
@@ -49,6 +51,18 @@ export default async function initUserRouter() {
         "/user/avatar",
         passport.authenticate("bearer", { session: false, failWithError: true }),
         asyncHandler(DeleteUserAvatarController)
+    );
+
+    router.get(
+        "/user/:userId",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(GetUserProfileController)
+    );
+
+    router.get(
+        "/user",
+        passport.authenticate("bearer", { session: false, failWithError: true }),
+        asyncHandler(GetCurrentUserProfileController)
     );
 
     router.patch(
