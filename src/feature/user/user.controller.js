@@ -2,7 +2,9 @@ import {
     AfterCreateUserAvatarService,
     BeforeCreateUserAvatarService,
     DeleteUserAvatarService,
-    EditUserService
+    EditUserService,
+    GetCurrentUserProfileService,
+    GetUserProfileService
 } from "@/feature/user/user.service";
 
 /**
@@ -40,7 +42,27 @@ export async function AfterCreateUserAvatarController(req, res) {
     res.send(response);
 }
 
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
+ */
 export async function DeleteUserAvatarController(req, res) {
     const response = await DeleteUserAvatarService(req, res);
+    res.send(response);
+}
+
+/**
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @return {Promise<void>}
+ */
+export async function GetUserProfileController(req, res) {
+    const response = await GetUserProfileService(req, res);
+    res.send(response);
+}
+
+export async function GetCurrentUserProfileController(req, res) {
+    const response = await GetCurrentUserProfileService(req, res);
     res.send(response);
 }
