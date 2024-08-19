@@ -1,6 +1,7 @@
 import { response, ResponseCode } from "@/config/response";
 import { createChat, getChat, getChatList, getMessages, getUserForChat } from "@/db/chat.dao";
 import { getLastMessageFromCache } from "@/cache/chat";
+import { getPostImages } from "@/db/post.dao";
 
 // TODO: CHECK LAST MESSAGE
 
@@ -99,6 +100,18 @@ export async function GetChattingByIdService(req, res) {
     }
 
     const chatting = await getChat(chattingId);
+
+    if (!chatting) {
+        return response(ResponseCode.INVALID_CHAT_ID, null);
+    }
+
+    if (chatting.senderId !== userId && chatting.receiverId !== userId) {
+        return response(ResponseCode.UNAUTHORIZED, null);
+    }
+
+    const to = await getUserForChat(userId === chatting.senderId ? chatting.receiverId : chatting.senderId);
+    const postImages = await getPostImages(chatting.postId);
+
     const messages = await getMessages(chattingId);
     const resultMessages = messages.map(m => ({
         id: m.id,
@@ -110,13 +123,17 @@ export async function GetChattingByIdService(req, res) {
 
     return response(ResponseCode.SUCCESS, {
         id: chatting.id,
-        to: null,   // TODO: ADD USER
+        to: {
+            id: to.id,
+            username: to.username,
+            avatar: to.avatarUrl
+        },
         post: {
             id: chatting.postId,
             itemName: chatting.postItemName,
             price: chatting.postPrice,
-            deposit: chatting.postDeposit
-            // TODO: ADD IMAGES
+            deposit: chatting.postDeposit,
+            images: postImages
         },
         socketNamespace: `/chattings/${chattingId}`,
         messages: resultMessages
