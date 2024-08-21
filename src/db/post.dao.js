@@ -37,10 +37,16 @@ export async function getPosts({ page, size, area, category }) {
             "userAvatar.url as authorAvatar",
             "rent.id as rentId"
         )
-        .leftJoin("postImage", function() {
-            this.on("post.id", "=", "postImage.postId")
-                .andOn("postImage.isDeleted", "=", 0);
+        .leftJoin(function() {
+            this.select("postId").min("id", { as: "minId" })
+                .from("postImage")
+                .where("postImage.isDeleted", 0)
+                .groupBy("postId")
+                .as("minImage");
+        }, function() {
+            this.on("post.id", "minImage.postId");
         })
+        .leftJoin("postImage", "minImage.minId", "postImage.id")
         .leftJoin("rent", function() {
             this.on("post.id", "=", "rent.postId")
                 .andOn("rent.isCanceled", "=", 0);
