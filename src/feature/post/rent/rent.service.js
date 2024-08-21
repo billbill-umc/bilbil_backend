@@ -14,6 +14,17 @@ import {
 } from "@/db/post.dao";
 import zod, { ZodError } from "zod";
 import notificationManager from "@/feature/notification/notification.manager";
+import { getDuplicated } from "@/config/cache";
+import { getChatByUserAndPostId } from "@/db/chat.dao";
+
+async function sendMessage(chatId, type, content) {
+    const pub = getDuplicated();
+    await pub.connect();
+    await pub.publish(`chat:${chatId}`, JSON.stringify({
+        type, content, sentAt: Math.floor((new Date).valueOf() / 1000)
+    }));
+    await pub.disconnect();
+}
 
 /**
  * @param {import("express").Request} req
@@ -61,6 +72,16 @@ export async function RequestRentService(req, res) {
         postId, userId, new Date(req.body.dateBegin * 1000), new Date(req.body.dateEnd * 1000)
     );
 
+    // IIFE for async
+    (async () => {
+        const chat = await getChatByUserAndPostId(userId, postId);
+        if (chat) {
+            await sendMessage(chat.id, "RENT_REQUEST", JSON.stringify({
+                dateBegin: req.body.dateBegin,
+                dateEnd: req.body.dateEnd
+            }));
+        }
+    })().then();
     notificationManager.newRentRequestNotification(post.authorId, postId).then();
 
     return response(ResponseCode.SUCCESS, null);
@@ -90,6 +111,13 @@ export async function CancelRequestService(req, res) {
     }
 
     await cancelPostRentRequest(postId, userId);
+    // IIFE for async
+    (async () => {
+        const chat = await getChatByUserAndPostId(userId, postId);
+        if (chat) {
+            await sendMessage(chat.id, "RENT_REQUEST_CANCEL", "EMPTY");
+        }
+    })().then();
     notificationManager.cancelRentRequestNotification(post.authorId, postId).then();
 
     return response(ResponseCode.SUCCESS, null);
@@ -138,6 +166,13 @@ export async function AcceptRequestService(req, res) {
     }
 
     await createPostRent(postId, rentRequest.id);
+    // IIFE for async
+    (async () => {
+        const chat = await getChatByUserAndPostId(userId, postId);
+        if (chat) {
+            await sendMessage(chat.id, "RENT_ACCEPT", "EMPTY");
+        }
+    })().then();
     notificationManager.acceptRentRequestNotification(req.body.targetUserId, postId).then();
 
     return response(ResponseCode.SUCCESS, null);
@@ -175,6 +210,13 @@ export async function CancelAcceptService(req, res) {
     }
 
     await cancelPostRent(postId);
+    // IIFE for async
+    (async () => {
+        const chat = await getChatByUserAndPostId(userId, postId);
+        if (chat) {
+            await sendMessage(chat.id, "RENT_REJECT", "EMPTY");
+        }
+    })().then();
     getPostRentRequestById(rent.requestId).then(r => {
         return notificationManager.rejectRentRequestNotification(r.borrowerId, postId);
     })

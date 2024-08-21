@@ -1,9 +1,10 @@
 import { Server } from "socket.io";
 import { verify } from "jsonwebtoken";
 import logger from "@/config/logger";
-import { createMessage, getChat } from "@/db/chat.dao";
+import { createMessage, getChat, getChatImageById } from "@/db/chat.dao";
 import { getDuplicated } from "@/config/cache";
 import { setLastMessageToCache } from "@/cache/chat";
+import zod from "zod";
 
 /**
  * @param {string} token
@@ -28,11 +29,20 @@ function authenticate(token) {
  * @return {boolean}
  */
 function isMessageObject(message) {
-    return message && message.content && message.type && message.sentAt
-        && typeof message.content === "string"
-        && (message.type === "TEXT" || message.type === "IMAGE")
-        && typeof message.type === "string"
-        && typeof message.sentAt === "number";
+    const messageObjectSchema = zod.object({
+        content: zod.string(),
+        type: zod.enum([ "TEXT", "IMAGE", "RENT_REQUEST", "RENT_ACCEPT", "RENT_REQUEST_CANCEL", "RENT_REJECT" ]),
+        sentAt: zod.number()
+    });
+
+    if (!message) return false;
+
+    try {
+        messageObjectSchema.parse(message);
+        return true;
+    } catch (ignored) {
+        return false;
+    }
 }
 
 // TODO: if can, refactoring namespace checking and authorization to middleware
@@ -120,7 +130,19 @@ export function initWebSocket(server) {
             await sub.subscribe(`chat:${chatId}`, async message => {
                 const msgObj = JSON.parse(message);
                 if (isMessageObject(msgObj)) {
-                    socket.emit("NEW_MESSAGE", msgObj);
+                    if (msgObj.type === "IMAGE") {
+                        const imgId = Number(msgObj.content);
+                        if (isNaN(imgId)) return;
+                        const img = await getChatImageById(imgId);
+                        if (!img) return;
+
+                        socket.emit("NEW_MESSAGE", {
+                            ...msgObj,
+                            content: img.url
+                        });
+                    } else {
+                        socket.emit("NEW_MESSAGE", msgObj);
+                    }
                 }
             });
         });
