@@ -57,6 +57,17 @@ INSERT INTO notification (userId, targetType, targetId)
 VALUES (1, 'MY_POST_INTERESTED', 1),
        (2, 'NEW_CHAT', 1);
 
+ALTER TABLE notification
+    MODIFY COLUMN targetType enum(
+        'MY_POST_ADDED_FAVORITE',
+        'NEW_MESSAGE',
+        'NEW_RENT_REQUEST',
+        'CANCEL_RENT_REQUEST',
+        'ACCEPT_RENT_REQUEST',
+        'REJECT_RENT_REQUEST'
+        )
+    NOT NULL;
+
 
 INSERT INTO postImage (postId, url)
 VALUES (1, 'https://via.placeholder.com/150'),

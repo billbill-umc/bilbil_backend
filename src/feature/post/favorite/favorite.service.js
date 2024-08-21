@@ -1,5 +1,6 @@
 import { response, ResponseCode } from "@/config/response";
 import { createFavorite, deleteFavorite, getFavorite, getPostById } from "@/db/post.dao";
+import notificationManager from "@/feature/notification/notification.manager";
 
 /**
  * @param {import("express").Request} req
@@ -28,6 +29,7 @@ export async function DoFavoriteService(req, res) {
     if (!favorite) {
         beingFavorite = true;
         await createFavorite(post.id, userId);
+        notificationManager.newFavoriteNotification(post.authorId, post.id).then();
     } else {
         await deleteFavorite(post.id, userId);
     }

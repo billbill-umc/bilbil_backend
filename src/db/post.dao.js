@@ -277,6 +277,13 @@ export async function getPostRentRequestByPostAndUser(postId, borrowerId) {
         .first();
 }
 
+export async function getPostRentRequestById(requestId) {
+    return getQueryBuilder()("rentRequest")
+        .select("*")
+        .where("id", requestId)
+        .first();
+}
+
 /**
  * @param {number} postId
  * @param {number} borrowerId
