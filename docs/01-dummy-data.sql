@@ -10,37 +10,16 @@ SET SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO';
 
 INSERT INTO category (id, name)
 VALUES (0, '전체'),
-       (1, '의류'),
-       (2, '화장품/뷰티'),
-       (3, '식품'),
-       (4, '주방용품'),
-       (5, '생활용품'),
-       (6, '홈/인테리어'),
-       (7, '생활가전'),
-       (8, '디지털가전'),
-       (9, '스포츠/레저'),
-       (10, '도서/음반'),
-       (11, '완구/취미'),
-       (12, '문구/오피스'),
-       (13, '반려동물용품'),
-       (14, '헬스/건강');
+       (1, '캠핑'),
+       (2, '공구'),
+       (3, '스포츠'),
+       (4, '기타');
 
 INSERT INTO category (id, name)
 VALUES (1000, '물물교환 - 전체'),
-       (1001, '물물교환 - 의류'),
-       (1002, '물물교환 - 화장품/뷰티'),
-       (1003, '물물교환 - 식품'),
-       (1004, '물물교환 - 주방용품'),
-       (1005, '물물교환 - 생활용품'),
-       (1006, '물물교환 - 홈/인테리어'),
-       (1007, '물물교환 - 생활가전'),
-       (1008, '물물교환 - 디지털가전'),
-       (1009, '물물교환 - 스포츠/레저'),
-       (1010, '물물교환 - 도서/음반'),
-       (1011, '물물교환 - 완구/취미'),
-       (1012, '물물교환 - 문구/오피스'),
-       (1013, '물물교환 - 반려동물용품'),
-       (1014, '물물교환 - 헬스/건강');
+       (1001, '물물교환 - 캠핑'),
+       (1002, '물물교환 - 스포츠'),
+       (1004, '물물교환 - 기타');
 
 SET SQL_MODE = 'NO_ENGINE_SUBSTITUTION';
 
@@ -67,12 +46,12 @@ INSERT INTO chat (postId, senderId, receiverId)
 VALUES (2, 1, 2);
 
 INSERT INTO chatMessage (chatId, senderId, type, content)
-VALUES (1, 1, 'TEXT', 'HELLO!'),
-       (1, 2, 'TEXT', 'HI!');
+VALUES (2, 1, 'TEXT', 'HELLO!'),
+       (2, 2, 'TEXT', 'HI!');
 
 INSERT INTO chatMessage (chatId, senderId, type, content)
-VALUES (2, 2, 'TEXT', 'HELLO!2'),
-       (2, 1, 'TEXT', 'HI!2');
+VALUES (3, 2, 'TEXT', 'HELLO!2'),
+       (3, 1, 'TEXT', 'HI!2');
 
 INSERT INTO notification (userId, targetType, targetId)
 VALUES (1, 'MY_POST_INTERESTED', 1),
