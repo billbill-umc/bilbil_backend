@@ -13,29 +13,29 @@
 3. `yarn start:dev` for start the server in development mode.
 
 ## Environment variables
-| name           | description              | default                |
-|----------------|--------------------------|------------------------|
-| INFO_LOG       | log file path            | logs/%DATE%.log        |
-| ERROR_LOG      | error log file path      | logs/%DATE%.error      |
-| MAX_LOG_SIZE   | log file maximum size    | 20m                    |
-| MAX_LOG_FILES  | maximum log file numbers | 14d                    |
-| TOKEN_SECRET   | JWT token secret         |                        |
-| AREA_CSV_FILE  | Area data csv file path  | docs/area_20240513.csv |
-| DB_HOST        | MySQL DB host            | localhost              |
-| DB_PORT        | MySQL DB port            | 3306                   |
-| DB_USER        | MySQL DB username        | bilbil                 |
-| DB_PASSWORD    | MySQL DB password        | bilbil                 |
-| DB_DATABASE    | MySQL DB database name   | bilbil                 |
-| REDIS_HOST     | Redis host               | localhost              |
-| REDIS_PORT     | Redis port               | 6379                   |
-| MAIL_USER      | SMTP mail user           |                        |
-| MAIL_PASSWORD  | SMTP mail password       |                        |
-| MAIL_HOST      | SMTP mail host           |                        |
-| MAIL_PORT      | SMTP mail port           | 465                    |
-| AWS_ACCESS_KEY | AWS access key id        |                        |
-| AWS_SECRET_KEY | AWS secret access key    |                        |
-| AWS_REGION     | AWS region               |                        |
-| AWS_S3_BUCKET  | AWS S3 bucket name       |                        | 
+| name                  | description              | default                |
+|-----------------------|--------------------------|------------------------|
+| INFO_LOG              | log file path            | logs/%DATE%.log        |
+| ERROR_LOG             | error log file path      | logs/%DATE%.error      |
+| MAX_LOG_SIZE          | log file maximum size    | 20m                    |
+| MAX_LOG_FILES         | maximum log file numbers | 14d                    |
+| TOKEN_SECRET          | JWT token secret         |                        |
+| AREA_CSV_FILE         | Area data csv file path  | docs/area_20240513.csv |
+| DB_HOST               | MySQL DB host            | localhost              |
+| DB_PORT               | MySQL DB port            | 3306                   |
+| DB_USER               | MySQL DB username        | bilbil                 |
+| DB_PASSWORD           | MySQL DB password        | bilbil                 |
+| DB_DATABASE           | MySQL DB database name   | bilbil                 |
+| REDIS_HOST            | Redis host               | localhost              |
+| REDIS_PORT            | Redis port               | 6379                   |
+| MAIL_USER             | SMTP mail user           |                        |
+| MAIL_PASSWORD         | SMTP mail password       |                        |
+| MAIL_HOST             | SMTP mail host           |                        |
+| MAIL_PORT             | SMTP mail port           | 465                    |
+| AWS_ACCESS_KEY_ID     | AWS access key id        |                        |
+| AWS_SECRET_ACCESS_KEY | AWS secret access key    |                        |
+| AWS_REGION            | AWS region               |                        |
+| AWS_S3_BUCKET         | AWS S3 bucket name       |                        | 
 
 This project using `dotenv` package so you can using `.env` file for setting environment variables.    
 See more in `.env.example` file
