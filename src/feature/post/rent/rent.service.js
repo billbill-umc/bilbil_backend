@@ -8,10 +8,12 @@ import {
     getPostById,
     getPostRent,
     getPostRentByBorrowerId,
+    getPostRentRequestById,
     getPostRentRequestByPostAndUser,
     getPostRentReview
 } from "@/db/post.dao";
 import zod, { ZodError } from "zod";
+import notificationManager from "@/feature/notification/notification.manager";
 
 /**
  * @param {import("express").Request} req
@@ -59,6 +61,8 @@ export async function RequestRentService(req, res) {
         postId, userId, new Date(req.body.dateBegin * 1000), new Date(req.body.dateEnd * 1000)
     );
 
+    notificationManager.newRentRequestNotification(post.authorId, postId).then();
+
     return response(ResponseCode.SUCCESS, null);
 }
 
@@ -86,6 +90,7 @@ export async function CancelRequestService(req, res) {
     }
 
     await cancelPostRentRequest(postId, userId);
+    notificationManager.cancelRentRequestNotification(post.authorId, postId).then();
 
     return response(ResponseCode.SUCCESS, null);
 }
@@ -133,6 +138,7 @@ export async function AcceptRequestService(req, res) {
     }
 
     await createPostRent(postId, rentRequest.id);
+    notificationManager.acceptRentRequestNotification(req.body.targetUserId, postId).then();
 
     return response(ResponseCode.SUCCESS, null);
 }
@@ -169,6 +175,10 @@ export async function CancelAcceptService(req, res) {
     }
 
     await cancelPostRent(postId);
+    getPostRentRequestById(rent.requestId).then(r => {
+        return notificationManager.rejectRentRequestNotification(r.borrowerId, postId);
+    })
+        .catch();
 
     return response(ResponseCode.SUCCESS, null);
 }
