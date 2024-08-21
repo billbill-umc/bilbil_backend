@@ -97,6 +97,16 @@ export async function getChat(chatId) {
         .first();
 }
 
+export async function getChatByUserAndPostId(userId, postId) {
+    return getQueryBuilder()("chat")
+        .where("postId", postId)
+        .andWhere(function() {
+            this.where("senderId", userId)
+                .orWhere("receiverId", userId);
+        })
+        .first();
+}
+
 /**
  * @param {chatId: number, senderId: number, type: string, content: string, createdAt: Date} message
  * @return {Promise<void>}
@@ -147,4 +157,11 @@ export async function createChatImage(chatId, url) {
         .insert({
             chatId, url
         });
+}
+
+export async function getChatImageById(imageId) {
+    return getQueryBuilder()("chatImage")
+        .select("url")
+        .where("id", "=", imageId)
+        .first();
 }
